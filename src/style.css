@@ -265,6 +265,11 @@ a:focus-visible {
     border-left: 4px solid var(--color-accent);
 }
 
+.label {
+    font-weight: 700;
+    color:  var(--color-text);
+}
+
 .back-btn {
     margin-bottom: 1rem;
     background: var(--color-accent);
