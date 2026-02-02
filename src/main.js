@@ -7,4 +7,10 @@ import './style.css'
 import javascriptLogo from './javascript.svg'
 import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.js'
-import { toggleMenu} from "./nav.js";
+
+
+import { initNav } from "./nav.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+    initNav();
+});
