@@ -101,3 +101,30 @@ if (list && leftBtn && rightBtn) {
         list.scrollBy({ left: -cardWidth, behavior: "smooth" });
     });
 }
+
+// Byt typ som visas via menyn
+const menuLinks = document.querySelectorAll(".nav-links a[data-type]");
+const featuredSection = document.querySelector("#featured");
+
+menuLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const type = link.dataset.type;
+        if (!type || !featuredSection) return;
+
+        // Uppdatera vad som visas
+        featuredSection.dataset.type = type;
+
+        // Ta bort gammalt
+        const container = document.querySelector(".featured-list");
+        container.innerHTML = "";
+
+        // Uppdatera titel
+        document.querySelector("#featured-title").textContent =
+            link.textContent;
+
+        // Ladda nya featured
+        loadFeatured();
+    });
+});
