@@ -2,12 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>galactic-dex</title>
+    <title>Galactic Dex</title>
   </head>
   <body>
-    <div id="app"></div>
+  <header class="header">
+      <nav class="container nav">
+          <a href="#top" class="logo">SW</a>
+          <button class="nav-toggle" aria-label="Öppna meny" aria-expanded="false">
+              <span class="hamburger"></span>
+          </button>
+          <ul class="nav-links">
+              <li><a href="#" data-type="people">Characters</a></li>
+              <li><a href="#" data-type="planets">Planets</a></li>
+              <li><a href="#" data-type="films">Movies</a></li>
+              <li><a href="#" data-type="starships">Starships</a></li>
+          </ul>
+      </nav>
+  </header>
+  <div id="app"> <!-- Header kommer här  -->
+      <!-- Featured sektion -->
+      <section id="featured" aria-labelledby="featured-title" data-type="people">
+          <h2 id="featured-title">Featured</h2>
+          <button class="nav-btn left-btn">‹</button> <button class="nav-btn right-btn">›</button>
+          <div class="featured-list">
+          </div>
+      </section>
+  </div>
+      <a id="top"></a>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -1,96 +1,555 @@
+/* ===========================
+   GLOBAL BAS
+   =========================== */
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    --color-bg: #050814;
+    --color-surface: #111827;
+    --color-text: #f5f5f5;
+    --color-accent: #facc15;
+    --color-accent-hover: #fde047;
+    --color-focus: #38bdf8;
+    --radius: 10px;
+    --transition: 0.2s ease;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+* {
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    min-width: 320px;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Layoutcontainer */
+#app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+/* Typografi */
+h1, h2, h3 {
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+}
+
+p {
+    margin: 0 0 0.75rem;
+}
+
+/* ===========================
+   KNAPPAR + TILLGÄNGLIGHET
+   =========================== */
+
+
+
+button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1rem;
+    font-weight: 500;
+    background-color: var(--color-accent);
+    color: #111; cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition); /* Neon glow */
+    box-shadow: 0 0 4px var(--color-accent), 0 0 8px var(--color-accent);
+    text-shadow: 0 0 2px var(--color-accent); } /* Hover-effekt */
+button:hover {
+    background-color: var(--color-accent-hover, var(--color-accent));
+    transform: translateY(-2px);
+    box-shadow: 0 0 6px var(--color-accent), 0 0 12px var(--color-accent), 0 0 18px var(--color-accent);
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+}
+
+/* ===========================
+   FEATURED SEKTION
+   =========================== */
+
+#featured {
+    padding: 1rem 0;
+    position: relative;
+}
+
+#featured h2 {
+    margin-bottom: 0.8rem;
+    font-size: 1.8rem;
+}
+
+/* Mobil: horisontell scroll + snap + centrerade kort */
+.featured-list {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+
+    /* centrera första och sista kortet */
+    padding-left: calc(50vw - 90px);
+    padding-right: calc(50vw - 90px);
+}
+
+/* Featured-kort */
+.featured-card {
+    min-width: 180px;
+    background: var(--color-surface);
+    padding: 1rem;
+    border-radius: var(--radius);
+    flex-shrink: 0;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+
+    scroll-snap-align: center;
+}
+
+.featured-card img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    object-fit: cover;
+}
+
+.featured-card button {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+}
+
+/* ===========================
+   FEATURED – NAVIGATION (MOBILE)
+   =========================== */
+
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--color-text);
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background var(--transition), transform var(--transition);
+    z-index: 20;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.left-btn {
+    left: 0.3rem;
+}
+
+.right-btn {
+    right: 0.3rem;
+}
+
+/* Dölj pilar på tablet/desktop */
+@media (min-width: 640px) {
+    .nav-btn {
+        display: none;
+    }
+}
+
+/* ===========================
+   RESPONSIVITET
+   =========================== */
+
+@media (min-width: 640px) {
+    .featured-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        overflow-x: visible;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .featured-card {
+        min-width: 0;
+        scroll-snap-align: unset;
+    }
+}
+
+@media (min-width: 1024px) {
+    #app {
+        padding: 2rem;
+    }
+
+    #featured h2 {
+        font-size: 2rem;
+    }
+}
+
+/* ===========================
+   KONTRAST & LÄSBARHET
+   =========================== */
+
+.featured-card h3 {
+    color: #fff;
+}
+
+/* ===========================
+   ARIA & ACCESSIBILITY (CSS)
+   =========================== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.offline-banner {
+    background: #b91c1c;
+    color: white;
+    padding: 0.75rem;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+}
+/* ===========================
+   DETAIL PAGE
+   =========================== */
+
+.detail-container {
+    background: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.detail-container img {
+    width: 100%;
+    max-width: 350px;
+    border-radius: var(--radius);
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+.detail-container h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.detail-info {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.detail-info div {
+    background: rgba(255,255,255,0.05);
+    padding: 0.8rem;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--color-accent);
+}
+
+.label {
+    font-weight: 700;
+    color:  var(--color-text);
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    margin-bottom: 10px;
+    background: transparent;
+    border: 2px solid #00eaff;
+    color: #00eaff;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.25s ease;
+    text-shadow: 0 0 2px #00eaff;
+    box-shadow: 0 0 6px rgba(0, 234, 255, 0.4);
+}
+
+/* Hover-effekt */
+.back-btn:hover {
+    background: rgba(0, 234, 255, 0.15);
+    box-shadow:
+            0 0 6px #00eaff,
+            0 0 12px #00eaff,
+            0 0 18px #00eaff;
+    transform: translateY(-2px);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-background);
+    font-family: var(--font-main);
+    color: var(--color-text);
+    overflow-x: hidden;
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+    padding-top: 100px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+}
+
+:root {
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
+    --color-secondary: #1e293b;
+    --color-accent: #0ea5e9;
+    --color-background: #f8fafc;
+    --color-surface: #ffffff;
+    --color-text: #1e293b;
+    --color-text-light: #64748b;
+    --color-border: #e2e8f0;
+
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 4rem;
+    --spacing-xl: 6rem;
+
+    --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 1000;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-decoration: none;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+.nav-toggle {
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 12px;
+    min-width: 44px;
+    min-height: 44px;
+    z-index: 1001;
 }
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #f7df1eaa);
+
+.hamburger {
+    display: block;
+    width: 32px;
+    height: 4px;
+    background-color: var(--color-text);
+    position: relative;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.hamburger::before,
+.hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 4px;
+    background-color: var(--color-text);
+    border-radius: 2px;
+    transition: transform 0.3s ease;
+}
+
+.hamburger::before {
+    top: -10px;
+}
+
+.hamburger::after {
+    top: 10px;
+}
+
+.nav-toggle.active .hamburger {
+    background-color: transparent;
+}
+
+.nav-toggle.active .hamburger::before {
+    transform: rotate(45deg);
+    top: 0;
+}
+
+.nav-toggle.active .hamburger::after {
+    transform: rotate(-45deg);
+    top: 0;
+}
+
+.nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 70%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: var(--color-surface);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    list-style: none;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.nav-links.active {
+    transform: translateX(0);
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 500;
+    font-size: 1.25rem;
+    padding: var(--spacing-sm);
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: var(--color-primary);
+}
+
+.nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 999;
+}
+
+.nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-sm);
 }
 
 .card {
-  padding: 2em;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
 }
 
-.read-the-docs {
-  color: #888;
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    border-color: var(--color-primary);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.card h3 {
+    margin: 0;
+    color: var(--color-text-light);
+    font-size: 1.3rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.card p {
+    margin: 0;
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+    .nav-toggle {
+        display: none;
+    }
+
+    .nav-links {
+        align-items: center;
+        height: auto;
+        width: auto;
+        max-width: none;
+        flex-direction: row;
+        justify-content: flex-end;
+        transform: none;
+        box-shadow: none;
+        background: none;
+        gap: var(--spacing-md);
+    }
+
+    .nav-links a {
+        font-size: 1rem;
+        padding: 0;
+    }
+
+    .nav-overlay {
+        display: none;
+    }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (min-width: 1024px) {
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
