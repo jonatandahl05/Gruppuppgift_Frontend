@@ -13,19 +13,28 @@
 </head>
 
 <body>
+    <!-- Visuell indikation om man är offline -->
+    <div
+        id="offlineBanner"
+        class="offline-banner"
+        role="alert"
+        aria-live="polite"
+        hidden>
+        You are offline – some info may not be uppdated.
+    </div>
 
-<div id="app">
+    <div id="app">
 
-    <!-- Back-knapp -->
-    <a href="/index.html" class="back-btn">← Back</a>
+        <!-- Back-knapp -->
+        <a href="/index.html" class="back-btn">← Back</a>
 
-    <h1 class="favorites-title">Favorites</h1>
+        <h1 class="favorites-title">Favorites</h1>
 
-    <div id="favorites-container"></div>
+        <div id="favorites-container"></div>
 
-</div>
+    </div>
 
-<script type="module" src="/src/js/favorites.js"></script>
+    <script type="module" src="/src/js/favorites.js"></script>
 
 </body>
 </html>

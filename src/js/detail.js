@@ -1,3 +1,9 @@
+import { initOfflineBanner } from "./offlineBanner.js";
+
+
+initOfflineBanner();
+
+
 // Read type and id from URL
 const params = new URLSearchParams(window.location.search);
 const type = params.get("type");

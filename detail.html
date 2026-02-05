@@ -11,15 +11,24 @@
     <link rel="stylesheet" href="/src/css/style.css">
 </head>
 <body>
+    <!-- Visuell indikation om man är offline -->
+    <div
+        id="offlineBanner"
+        class="offline-banner"
+        role="alert"
+        aria-live="polite"
+        hidden>
+        You are offline – some info may not be uppdated.
+    </div>
 
-<div id="app">
-    <a href="/index.html" class="back-btn">← Back</a>
+    <div id="app">
+        <a href="/index.html" class="back-btn">← Back</a>
 
 
-    <section id="detail" class="detail-container">
-        <!-- JS fyller innehållet här -->
-    </section>
-</div>
+        <section id="detail" class="detail-container">
+            <!-- JS fyller innehållet här -->
+        </section>
+    </div>
 
 <script type="module" src="/src/js/detail.js"></script>
 

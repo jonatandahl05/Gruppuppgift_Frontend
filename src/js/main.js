@@ -1,9 +1,12 @@
 import "../css/style.css";
 import "./featured.js";
 import { initNav } from "./nav.js";
+import { initOfflineBanner } from "./offlineBanner.js";
 
 const THEME_KEY = "theme"; // "dark" | "light"
 const DARK_CLASS = "dark-theme"; // must match your CSS selector
+
+initOfflineBanner();
 
 function applyTheme(theme) {
   const isDark = theme === "dark";

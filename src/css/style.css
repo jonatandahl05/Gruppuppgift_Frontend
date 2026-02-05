@@ -579,3 +579,20 @@ button:hover {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+.offline-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 165, 0, 0.15);
+  backdrop-filter: blur(6px);
+}
+
+html.dark-theme .offline-banner {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+

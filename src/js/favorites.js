@@ -1,3 +1,8 @@
+import { initOfflineBanner } from "./offlineBanner.js";
+
+initOfflineBanner();
+
+
 const container = document.getElementById("favorites-container");
 
 function renderFavorites() {
