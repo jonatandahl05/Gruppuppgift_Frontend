@@ -120,6 +120,54 @@ async function loadFeatured(type) {
     }
 }
 
+
+// Ladda med filter (Dark/Light Side)
+async function loadFiltered(type, filter) {
+    const container = document.querySelector(".featured-list");
+    const endpoint = endpoints[type];
+
+    if (!container || !endpoint) return;
+
+    container.innerHTML = '<p class="loading">Loading...</p>';
+
+    const darkSideNames = ["vader", "darth", "sidious", "palpatine", "maul", "dooku", "kylo"];
+    const lightSideNames = ["luke", "leia", "obi-wan", "yoda", "rey", "finn", "han", "chewbacca"];
+
+    try {
+        const res = await fetch(endpoint);
+        const data = await res.json();
+
+        container.innerHTML = "";
+
+        for (const item of data.results) {
+            const name = (item.name || item.title || "").toLowerCase();
+            const id = extractId(item.url);
+
+            let matches = false;
+
+            if (filter === "dark") {
+                matches = darkSideNames.some(dark => name.includes(dark));
+            } else if (filter === "light") {
+                matches = lightSideNames.some(light => name.includes(light));
+            }
+
+            if (matches && id) {
+                const card = createCard(item, type, id);
+                container.appendChild(card);
+            }
+        }
+
+        if (container.children.length === 0) {
+            container.innerHTML = '<p class="no-results">No characters found for this filter.</p>';
+        }
+
+    } catch (err) {
+        console.error("Error loading filtered:", err);
+        container.innerHTML = '<p class="error">Could not load data.</p>';
+    }
+}
+
+
 // addEventlistener på nav viewchange
 window.addEventListener("nav:viewChange", (e) => {
     const { action, resource, filter } = e.detail;
