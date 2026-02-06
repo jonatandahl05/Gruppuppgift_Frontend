@@ -50,15 +50,45 @@ async function loadFeatured() {
 
     if (!section || !container) return;
 
-    const type = section.dataset.type;
+    const type = section.dataset.type || "people";
+    const activeFilter = section.dataset.filter || "";
+
     const ids = popular[type];
     const endpoint = endpoints[type];
+
+    if (!ids || !endpoint) return;
+
+    container.innerHTML = "";
 
     for (const id of ids) {
         try {
             const res = await fetch(`${endpoint}${id}/`);
             const data = await res.json();
 
+
+            if (activeFilter === "dark") {
+                const name = (data.name || data.title || "").toLowerCase();
+                const darkSideNames = ["vader", "sidious", "palpatine", "anakin"];
+
+                const isDark = darkSideNames.some(dark =>
+                    name.includes(dark)
+                );
+
+                if (!isDark) continue;
+            }
+
+            if (activeFilter === "light") {
+                const name = (data.name || data.title || "").toLowerCase();
+                const lightSideNames = ["luke", "leia", "obi-wan", "yoda"];
+
+                const isLight = lightSideNames.some(light =>
+                    name.includes(light)
+                );
+
+                if (!isLight) continue;
+            }
+
+            // Render card
             const card = document.createElement("div");
             card.classList.add("featured-card");
 
@@ -81,6 +111,25 @@ async function loadFeatured() {
     }
 }
 
+// addEventlistener på nav viewchange
+window.addEventListener("nav:viewChange", (e) => {
+    const { action, resource, filter } = e.detail;
+
+    const section = document.querySelector("#featured");
+    if (!section) return;
+
+    if (resource) {
+        section.dataset.type = resource;
+    }
+
+    section.dataset.filter = filter || "";
+
+    loadFeatured();
+});
+
+
+// Init – första laddning
+
 loadFeatured();
 
 // ===============================
@@ -92,39 +141,12 @@ const rightBtn = document.querySelector(".right-btn");
 
 if (list && leftBtn && rightBtn) {
     rightBtn.addEventListener("click", () => {
-        const cardWidth = list.querySelector(".featured-card").offsetWidth + 16;
+        const cardWidth = list.querySelector(".featured-card")?.offsetWidth + 16 || 200;
         list.scrollBy({ left: cardWidth, behavior: "smooth" });
     });
 
     leftBtn.addEventListener("click", () => {
-        const cardWidth = list.querySelector(".featured-card").offsetWidth + 16;
+        const cardWidth = list.querySelector(".featured-card")?.offsetWidth + 16 || 200;
         list.scrollBy({ left: -cardWidth, behavior: "smooth" });
     });
 }
-
-// Byt typ som visas via menyn
-const menuLinks = document.querySelectorAll(".nav-links a[data-type]");
-const featuredSection = document.querySelector("#featured");
-
-menuLinks.forEach(link => {
-    link.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        const type = link.dataset.type;
-        if (!type || !featuredSection) return;
-
-        // Uppdatera vad som visas
-        featuredSection.dataset.type = type;
-
-        // Ta bort gammalt
-        const container = document.querySelector(".featured-list");
-        container.innerHTML = "";
-
-        // Uppdatera titel
-        document.querySelector("#featured-title").textContent =
-            link.textContent;
-
-        // Ladda nya featured
-        loadFeatured();
-    });
-});
