@@ -28,8 +28,8 @@ function extractId(url) {
 const popular = {
     people: [1, 4, 5, 10, 11],
     planets: [1, 2, 3, 4, 5],
-    starships: [9, 10, 11],
-    films: [1, 2, 3]
+    starships: [9, 10, 11, 12, 13],
+    films: [1, 2, 3, 4, 5]
 };
 
 // ===============================
