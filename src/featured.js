@@ -142,9 +142,7 @@ async function loadAll(type) {
     }
 }
 
-// ===============================
-// Ladda Featured
-// ===============================
+// Ladda Featured (populära)
 async function loadFeatured(type) {
     const container = document.querySelector(".featured-list");
     const ids = popular[type];
@@ -246,39 +244,30 @@ export async function handleViewChange(action, resource, filter) {
 // addEventlistener på nav viewchange
 window.addEventListener("nav:viewChange", (e) => {
     const { action, resource, filter } = e.detail;
-
-    const section = document.querySelector("#featured");
-    if (!section) return;
-
-    if (resource) {
-        section.dataset.type = resource;
-    }
-
-    section.dataset.filter = filter || "";
-
-    loadFeatured();
+    handleViewChange(action, resource, filter);
 });
 
-
 // Init – första laddning
+loadFeatured("people");
 
-loadFeatured();
 
 // ===============================
 // Navigera mellan kort (mobile)
 // ===============================
-const list = document.querySelector(".featured-list");
-const leftBtn = document.querySelector(".left-btn");
-const rightBtn = document.querySelector(".right-btn");
+document.addEventListener("DOMContentLoaded", () => {
+    const list = document.querySelector(".featured-list");
+    const leftBtn = document.querySelector(".left-btn");
+    const rightBtn = document.querySelector(".right-btn");
 
-if (list && leftBtn && rightBtn) {
-    rightBtn.addEventListener("click", () => {
-        const cardWidth = list.querySelector(".featured-card")?.offsetWidth + 16 || 200;
-        list.scrollBy({ left: cardWidth, behavior: "smooth" });
-    });
+    if (list && leftBtn && rightBtn) {
+        rightBtn.addEventListener("click", () => {
+            const cardWidth = list.querySelector(".featured-card")?.offsetWidth + 16 || 200;
+            list.scrollBy({ left: cardWidth, behavior: "smooth" });
+        });
 
-    leftBtn.addEventListener("click", () => {
-        const cardWidth = list.querySelector(".featured-card")?.offsetWidth + 16 || 200;
-        list.scrollBy({ left: -cardWidth, behavior: "smooth" });
-    });
-}
+        leftBtn.addEventListener("click", () => {
+            const cardWidth = list.querySelector(".featured-card")?.offsetWidth + 16 || 200;
+            list.scrollBy({ left: -cardWidth, behavior: "smooth" });
+        });
+    }
+});
