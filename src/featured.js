@@ -69,6 +69,30 @@ function createCard(data, type, id) {
     return card;
 }
 
+// Uppdatera titel på sidan
+function updateTitle(action, resource, filter) {
+    const titleEl = document.querySelector("#featured-title");
+    if (!titleEl) return;
+
+    const resourceNames = {
+        people: "Characters",
+        planets: "Planets",
+        starships: "Starships",
+        films: "Movies"
+    };
+
+    if (action === "favorites") {
+        titleEl.textContent = "Your Favourites";
+    } else if (action === "filter" && filter) {
+        const filterName = filter.charAt(0).toUpperCase() + filter.slice(1);
+        titleEl.textContent = `${filterName} Side Characters`;
+    } else if (action === "list") {
+        titleEl.textContent = `All ${resourceNames[resource] || resource}`;
+    } else {
+        titleEl.textContent = `Featured ${resourceNames[resource] || resource}`;
+    }
+}
+
 // ===============================
 // Ladda Featured
 // ===============================
