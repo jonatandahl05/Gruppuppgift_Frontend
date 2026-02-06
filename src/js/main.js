@@ -1,9 +1,12 @@
-import "./style.css";
+import "../css/style.css";
 import "./featured.js";
 import { initNav } from "./nav.js";
+import { initOfflineBanner } from "./offlineBanner.js";
 
 const THEME_KEY = "theme"; // "dark" | "light"
 const DARK_CLASS = "dark-theme"; // must match your CSS selector
+
+initOfflineBanner();
 
 function applyTheme(theme) {
   const isDark = theme === "dark";
@@ -38,3 +41,15 @@ document.addEventListener("DOMContentLoaded", () => {
     applyTheme(nextTheme);
   });
 });
+
+// -- Service Worker --
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      await navigator.serviceWorker.register("./service-worker.js");
+      console.log("Service Worker registered ✅");
+    } catch (err) {
+      console.error("Service Worker registration failed ❌", err);
+    }
+  });
+}
