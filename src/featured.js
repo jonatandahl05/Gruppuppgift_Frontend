@@ -96,70 +96,27 @@ function updateTitle(action, resource, filter) {
 // ===============================
 // Ladda Featured
 // ===============================
-async function loadFeatured() {
-    const section = document.querySelector("#featured");
+async function loadFeatured(type) {
     const container = document.querySelector(".featured-list");
-
-    if (!section || !container) return;
-
-    const type = section.dataset.type || "people";
-    const activeFilter = section.dataset.filter || "";
-
     const ids = popular[type];
     const endpoint = endpoints[type];
 
-    if (!ids || !endpoint) return;
+    if (!container || !ids || !endpoint) return;
 
-    container.innerHTML = "";
+    container.innerHTML = '<p class="loading">Loading...</p>';
 
-    for (const id of ids) {
-        try {
+    try {
+        container.innerHTML = "";
+
+        for (const id of ids) {
             const res = await fetch(`${endpoint}${id}/`);
             const data = await res.json();
-
-
-            if (activeFilter === "dark") {
-                const name = (data.name || data.title || "").toLowerCase();
-                const darkSideNames = ["vader", "sidious", "palpatine", "anakin"];
-
-                const isDark = darkSideNames.some(dark =>
-                    name.includes(dark)
-                );
-
-                if (!isDark) continue;
-            }
-
-            if (activeFilter === "light") {
-                const name = (data.name || data.title || "").toLowerCase();
-                const lightSideNames = ["luke", "leia", "obi-wan", "yoda"];
-
-                const isLight = lightSideNames.some(light =>
-                    name.includes(light)
-                );
-
-                if (!isLight) continue;
-            }
-
-            // Render card
-            const card = document.createElement("div");
-            card.classList.add("featured-card");
-
-            card.innerHTML = `
-                <img 
-                    src="${getImage(type, id)}" 
-                    alt="${data.name || data.title}"
-                    onerror="this.onerror=null; this.src='/star-wars.png';"
-                />
-                <h3>${data.name || data.title}</h3>
-                <button type="button">View more</button>
-            `;
-
-            card.querySelector("button").addEventListener("click", () => openDetail(type, id));
-
+            const card = createCard(data, type, id);
             container.appendChild(card);
-        } catch (err) {
-            console.error("Fel vid hämtning:", err);
         }
+    } catch (err) {
+        console.error("Error loading featured:", err);
+        container.innerHTML = '<p class="error">Could not load data.</p>';
     }
 }
 
