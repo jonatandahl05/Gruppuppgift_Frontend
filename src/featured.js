@@ -102,6 +102,46 @@ function updateTitle(action, resource, filter) {
     }
 }
 
+
+// Ladda ALL från API (för "All"-knappen)
+async function loadAll(type) {
+    const container = document.querySelector(".featured-list");
+    const endpoint = endpoints[type];
+
+    if (!container || !endpoint) return;
+
+    container.innerHTML = '<p class="loading">Loading...</p>';
+
+    try {
+        let allResults = [];
+        let nextUrl = endpoint;
+
+        while (nextUrl) {
+            const res = await fetch(nextUrl);
+            const data = await res.json();
+            allResults = allResults.concat(data.results);
+            nextUrl = data.next;
+
+            // Begränsa till 18
+            if (allResults.length >= 18) break;
+        }
+
+        container.innerHTML = "";
+
+        for (const item of allResults) {
+            const id = extractId(item.url);
+            if (id) {
+                const card = createCard(item, type, id);
+                container.appendChild(card);
+            }
+        }
+
+    } catch (err) {
+        console.error("Error loading all:", err);
+        container.innerHTML = '<p class="error">Could not load data. Try again later.</p>';
+    }
+}
+
 // ===============================
 // Ladda Featured
 // ===============================
