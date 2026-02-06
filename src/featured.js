@@ -49,6 +49,26 @@ function openDetail(type, id) {
     window.location.href = `detail.html?type=${type}&id=${id}`;
 }
 
+// Skapa ett kort
+function createCard(data, type, id) {
+    const card = document.createElement("div");
+    card.classList.add("featured-card");
+
+    card.innerHTML = `
+        <img 
+            src="${getImage(type, id)}"
+            alt="${data.name || data.title}"
+            onerror="this.onerror=null; this.src='/star-wars.png';"
+        />
+        <h3>${data.name || data.title}</h3>
+        <button type="button">View more</button>
+    `;
+
+    card.querySelector("button").addEventListener("click", () => openDetail(type, id));
+
+    return card;
+}
+
 // ===============================
 // Ladda Featured
 // ===============================
