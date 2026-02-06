@@ -14,6 +14,14 @@ function getImage(type, id) {
     return paths[type];
 }
 
+// Hämta id från url
+
+function extractId(url) {
+    // URL ser ut som: "https://swapi.py4e.com/api/people/1/"
+    const matches = url.match(/\/(\d+)\/$/);
+    return matches ? matches[1] : null;
+}
+
 // ===============================
 // Populära ID:n
 // ===============================
