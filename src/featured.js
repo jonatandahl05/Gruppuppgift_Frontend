@@ -42,6 +42,15 @@ const endpoints = {
     films: "https://swapi.py4e.com/api/films/"
 };
 
+
+// Current view
+let currentView = {
+    action: "featured",
+    resource: "people",
+    filter: ""
+};
+
+
 // ===============================
 // Öppna detaljsida
 // ===============================
@@ -164,6 +173,32 @@ async function loadFiltered(type, filter) {
     } catch (err) {
         console.error("Error loading filtered:", err);
         container.innerHTML = '<p class="error">Could not load data.</p>';
+    }
+}
+
+
+// Handle viewchange
+export async function handleViewChange(action, resource, filter) {
+    currentView = { action, resource, filter };
+
+    updateTitle(action, resource, filter);
+
+    switch (action) {
+        case "list":
+            await loadAll(resource);
+            break;
+
+        case "filter":
+            await loadFiltered(resource, filter);
+            break;
+
+        case "favorites":
+            loadFavorites();
+            break;
+
+        default:
+            await loadFeatured(resource);
+            break;
     }
 }
 
