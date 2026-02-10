@@ -1,55 +1,108 @@
 import "../css/style.css";
-import "./featured.js";
-import { initNav } from "./nav.js";
-import { initOfflineBanner } from "./offlineBanner.js";
 
-const THEME_KEY = "theme"; // "dark" | "light"
-const DARK_CLASS = "dark-theme"; // must match your CSS selector
+/* ===============================
+   DARK MODE
+================================ */
+function initThemeToggle() {
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
 
-initOfflineBanner();
+    // Ladda sparat tema
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") {
+        document.documentElement.classList.add("dark-theme");
+        btn.setAttribute("aria-pressed", "true");
+        btn.querySelector(".theme-toggle__icon").textContent = "☀️";
+    }
 
-function applyTheme(theme) {
-  const isDark = theme === "dark";
+    btn.onclick = () => {
+        const isDark = document.documentElement.classList.toggle("dark-theme");
 
-  // Use ONE place for the class; here we use <html> (documentElement)
-  document.documentElement.classList.toggle(DARK_CLASS, isDark);
+        btn.setAttribute("aria-pressed", isDark);
+        btn.querySelector(".theme-toggle__icon").textContent = isDark ? "☀️" : "🌙";
 
-  const btn = document.getElementById("theme-toggle");
-  if (btn) btn.setAttribute("aria-pressed", String(isDark));
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    };
+}
+initThemeToggle();
 
-  const icon = document.querySelector("#theme-toggle .theme-toggle__icon");
-  // If dark is ON, show sun (meaning: click to go light). If light is ON, show moon.
-  if (icon) icon.textContent = isDark ? "☀️" : "🌙";
+
+/* ===============================
+   CATEGORY NAVIGATION
+================================ */
+function initCategoryNavigation() {
+    const links = document.querySelectorAll(".nav-links a[data-type]");
+    links.forEach(link => {
+        link.onclick = (e) => {
+            e.preventDefault();
+            const type = link.dataset.type;
+            window.dispatchEvent(new CustomEvent("show-featured", { detail: { type } }));
+        };
+    });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  initNav();
+initCategoryNavigation();
 
-  const saved = localStorage.getItem(THEME_KEY);
-  const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
-  const initialTheme = saved ?? (prefersDark ? "dark" : "light");
-  applyTheme(initialTheme);
+/* ===============================
+   SHOW SECTIONS
+================================ */
+const featured = document.getElementById("featured");
+const favorites = document.getElementById("favorites");
+const detail = document.getElementById("detail");
 
-  const btn = document.getElementById("theme-toggle");
-  if (!btn) return;
+function show(section) {
+    featured.style.display = "none";
+    favorites.style.display = "none";
+    detail.style.display = "none";
+    section.style.display = "block";
+}
 
-  btn.addEventListener("click", () => {
-    // IMPORTANT: check the same place you toggle the class
-    const isDarkNow = document.documentElement.classList.contains(DARK_CLASS);
-    const nextTheme = isDarkNow ? "light" : "dark";
-    localStorage.setItem(THEME_KEY, nextTheme);
-    applyTheme(nextTheme);
-  });
+/* ===============================
+   FAVORITES
+================================ */
+document.getElementById("nav-favorites").onclick = () => {
+    import("./favorites.js").then(m => m.renderFavorites());
+    show(favorites);
+};
+
+/* ===============================
+   DETAILS
+================================ */
+window.addEventListener("open-detail", (e) => {
+    const { type, id } = e.detail;
+    import("./detail.js").then(m => m.renderDetail(type, id));
+    show(detail);
 });
 
-// -- Service Worker --
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      await navigator.serviceWorker.register("./service-worker.js");
-      console.log("Service Worker registered ✅");
-    } catch (err) {
-      console.error("Service Worker registration failed ❌", err);
-    }
-  });
-}
+/* ===============================
+   FEATURED
+================================ */
+window.addEventListener("show-featured", (e) => {
+    const { type } = e.detail;
+    featured.dataset.type = type;
+    import("./featured.js").then(m => m.loadFeatured());
+    show(featured);
+});
+
+/* ===============================
+   START APP
+================================ */
+import("./featured.js").then(m => m.loadFeatured());
+/* ===============================
+   MOBILE NAV (hamburger)
+================================ */
+const navToggle = document.querySelector(".nav-toggle");
+const navLinks = document.querySelector(".nav-links");
+const navOverlay = document.querySelector(".nav-overlay");
+
+navToggle.addEventListener("click", () => {
+    navToggle.classList.toggle("active");
+    navLinks.classList.toggle("active");
+    navOverlay.classList.toggle("active");
+});
+
+navOverlay.addEventListener("click", () => {
+    navToggle.classList.remove("active");
+    navLinks.classList.remove("active");
+    navOverlay.classList.remove("active");
+});

@@ -596,17 +596,15 @@ html.dark-theme .offline-banner {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* REAL APP FAVORITE STAR */
 .fav-btn {
     background: none !important;
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
     appearance: none !important;
-    -webkit-appearance: none !important;
 
     cursor: pointer;
-    font-size: 2.8rem; /* större, tydligare stjärna */
+    font-size: 1.2rem;
     color: var(--color-text);
     padding: 0;
     margin: 0;
@@ -616,22 +614,14 @@ html.dark-theme .offline-banner {
     align-items: center;
     justify-content: center;
 
-    transition:
-            color 0.25s ease,
-            transform 0.25s ease;
+    transition: color 0.25s ease, transform 0.25s ease;
 }
 
-/* Tom stjärna (default) */
-.fav-btn::before {
-    content: "☆";
-    opacity: 0.9;
-}
-
-/* Hover-effekt (som riktiga appar) */
 .fav-btn:hover {
     transform: scale(1.12);
     color: var(--color-accent);
 }
+
 
 /* Fylld stjärna när aktiv */
 .fav-btn.active::before {
@@ -645,4 +635,45 @@ html.dark-theme .offline-banner {
     justify-content: space-between;
     align-items: center;
     margin-top: 0.8rem;
+}
+.featured-card .fav-btn {
+    font-size: 2.4rem; /* stor stjärna bara i featured */
+}
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.6rem;
+    gap: 0.6rem;
+}
+
+.card-actions .view-btn {
+    flex: 1; /* eller ta bort helt */
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+
+    /* knappen blir så liten som möjligt */ }
+
+.card-actions .fav-btn {
+    font-size: 1.8rem; /* lagom stor stjärna */
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+}
+/* FAVORITES EXACT SAME SIZE AS FEATURED */
+.favorites-list {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem !important;
+    overflow-x: auto !important;
+    padding: 1rem 0 !important;
+    scroll-snap-type: x mandatory !important;
+}
+
+.favorites-list .featured-card {
+    width: 180px !important;
+    min-width: 180px !important;
+    max-width: 180px !important;
+    flex-shrink: 0 !important;
+    scroll-snap-align: center !important;
 }
