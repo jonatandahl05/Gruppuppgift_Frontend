@@ -88,7 +88,7 @@ export function initNav() {
             closeMobileMenu();
         });
     });
-  });
+  };
 
 //    navLinks.querySelectorAll('a').forEach(link => {
 //        link.addEventListener('click', () => {
@@ -100,10 +100,10 @@ export function initNav() {
 
     if (window.innerWidth >= 768) {
         initDesktopDropdown();
-    } else {
+    } 
+    else {
         initMobileMenu();
     }
-}
 
 function initDesktopDropdown() {
     document.querySelectorAll(".nav-item").forEach(item => {
