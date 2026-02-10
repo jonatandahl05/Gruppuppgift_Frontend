@@ -371,6 +371,10 @@ button:hover {
   padding: 0.4rem 0.8rem;
 }
 
+.sub-menu.active {
+    display: block;
+}
+
 /* Featured – navigation (mobile) */
 .nav-btn {
   position: absolute;
@@ -397,6 +401,50 @@ button:hover {
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.25);
   transform: translateY(-50%) scale(1.05);
+}
+
+.nav-item {
+    position: relative;
+}
+
+.sub-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    /* VIKTIGT: dold som standard */
+    display: none;
+}
+
+@media (min-width: 768px) {
+
+    .sub-menu.open {
+        display: block;
+        position: absolute;
+        top: 100%;
+        left: 0;
+
+        background: var(--color-surface);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+        min-width: 180px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        z-index: 2000;
+    }
+
+    .sub-menu li button {
+        width: 100%;
+        text-align: left;
+        padding: 0.6rem 1rem;
+        background: none;
+        border: none;
+        color: var(--color-text);
+        cursor: pointer;
+    }
+
+    .sub-menu li button:hover {
+        background: rgba(255,255,255,0.1);
+    }
 }
 
 .left-btn {

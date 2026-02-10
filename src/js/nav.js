@@ -88,6 +88,14 @@ export function initNav() {
             closeMobileMenu();
         });
     });
+
+    if (window.innerWidth >= 768) {
+      initDesktopDropdown();
+    } 
+    else {
+      initMobileMenu();
+    }
+
   };
 
 //    navLinks.querySelectorAll('a').forEach(link => {
@@ -97,13 +105,6 @@ export function initNav() {
 //            }
 //        });
 //    });
-
-    if (window.innerWidth >= 768) {
-        initDesktopDropdown();
-    } 
-    else {
-        initMobileMenu();
-    }
 
 function initDesktopDropdown() {
     document.querySelectorAll(".nav-item").forEach(item => {
