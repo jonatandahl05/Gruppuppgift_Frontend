@@ -38,8 +38,8 @@ export function renderNav() {
 }
 
 export function initNav() {
-    const navToggle = document.querySelector('.nav-toggle');
-    const navLinks = document.querySelector('.nav-links');
+  const navToggle = document.querySelector('.nav-toggle');
+  const navLinks = document.querySelector('.nav-links');
 
     if (!navToggle || !navLinks) return;
 
@@ -57,13 +57,19 @@ export function initNav() {
         document.body.style.overflow = isOpen ? 'hidden' : '';
     }
 
-    navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            if (navLinks.classList.contains('active')) {
-                toggleMenu();
-            }
-        });
+  navLinks.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('click', () => {
+      if (navLinks.classList.contains('active')) toggleMenu();
     });
+  });
+
+//    navLinks.querySelectorAll('a').forEach(link => {
+//        link.addEventListener('click', () => {
+//            if (navLinks.classList.contains('active')) {
+//                toggleMenu();
+//            }
+//        });
+//    });
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navLinks.classList.contains('active')) {
