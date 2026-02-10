@@ -34,6 +34,21 @@ const endpoints = {
     films: "https://swapi.py4e.com/api/films/"
 };
 
+function toggleFavorite(item) {
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    const exists = favorites.some(fav => fav.id === item.id);
+
+    if (exists) {
+        favorites = favorites.filter(fav => fav.id !== item.id);
+    } else {
+        favorites.push(item);
+    }
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+}
+
+
 // ===============================
 // Öppna detaljsida
 // ===============================
@@ -63,16 +78,46 @@ async function loadFeatured() {
             card.classList.add("featured-card");
 
             card.innerHTML = `
-                <img 
-                    src="${getImage(type, id)}" 
-                    alt="${data.name || data.title}"
-                    onerror="this.onerror=null; this.src='/star-wars.png';"
-                />
-                <h3>${data.name || data.title}</h3>
-                <button type="button">View more</button>
-            `;
+    <img 
+        src="${getImage(type, id)}" 
+        alt="${data.name || data.title}"
+        onerror="this.onerror=null; this.src='/star-wars.png';"
+    />
+    <h3>${data.name || data.title}</h3>
 
-            card.querySelector("button").addEventListener("click", () => openDetail(type, id));
+    <div class="featured-actions">
+        <button type="button" class="view-btn">View more</button>
+        <button 
+            type="button" 
+            class="fav-btn" 
+            data-id="${endpoint}${id}/" 
+            data-name="${data.name || data.title}" 
+            data-type="${type}">
+        </button>
+    </div>
+`;
+
+            card.querySelector(".view-btn").addEventListener("click", () => openDetail(type, id));
+
+            const favBtn = card.querySelector(".fav-btn");
+
+            favBtn.addEventListener("click", () => {
+                const item = {
+                    id: favBtn.dataset.id,
+                    name: favBtn.dataset.name,
+                    type: favBtn.dataset.type
+                };
+
+                toggleFavorite(item);
+                favBtn.classList.toggle("active");
+            });
+
+           // Markera om redan favorit
+            const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+            const isFav = savedFavorites.some(fav => fav.id === favBtn.dataset.id);
+            if (isFav) {
+                favBtn.classList.add("active");
+            }
 
             container.appendChild(card);
         } catch (err) {

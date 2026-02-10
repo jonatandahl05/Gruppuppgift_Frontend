@@ -596,3 +596,53 @@ html.dark-theme .offline-banner {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* REAL APP FAVORITE STAR */
+.fav-btn {
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
+    cursor: pointer;
+    font-size: 2.8rem; /* större, tydligare stjärna */
+    color: var(--color-text);
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+            color 0.25s ease,
+            transform 0.25s ease;
+}
+
+/* Tom stjärna (default) */
+.fav-btn::before {
+    content: "☆";
+    opacity: 0.9;
+}
+
+/* Hover-effekt (som riktiga appar) */
+.fav-btn:hover {
+    transform: scale(1.12);
+    color: var(--color-accent);
+}
+
+/* Fylld stjärna när aktiv */
+.fav-btn.active::before {
+    content: "★";
+    color: var(--color-accent);
+    opacity: 1;
+}
+
+.featured-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.8rem;
+}
