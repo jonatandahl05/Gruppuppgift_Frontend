@@ -23,11 +23,11 @@ function applyTheme(theme) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  initNav();
-
-  const app = document.querySelector("#app");
   
+  const app = document.querySelector("#app");
   app.insertAdjacentHTML("afterbegin", renderNav());
+  
+  initNav();
 
   const saved = localStorage.getItem(THEME_KEY);
   const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
