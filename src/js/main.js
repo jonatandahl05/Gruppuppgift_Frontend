@@ -1,6 +1,6 @@
 import "../css/style.css";
 import "./featured.js";
-import { initNav } from "./nav.js";
+import { renderNav, initNav } from "./nav.js";
 import { initOfflineBanner } from "./offlineBanner.js";
 
 const THEME_KEY = "theme"; // "dark" | "light"
@@ -24,6 +24,10 @@ function applyTheme(theme) {
 
 document.addEventListener("DOMContentLoaded", () => {
   initNav();
+
+  const app = document.querySelector("#app");
+  
+  app.insertAdjacentHTML("afterbegin", renderNav());
 
   const saved = localStorage.getItem(THEME_KEY);
   const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
