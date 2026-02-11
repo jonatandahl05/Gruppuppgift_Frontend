@@ -1,60 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Galactic Dex</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Wars Explorer</title>
+    <link rel="stylesheet" href="/src/css/style.css">
 </head>
-
 <body>
 
 <header class="header">
-    <nav class="container nav">
-        <a href="#top" class="logo">SW</a>
+    <nav class="nav container">
 
-        <button id="theme-toggle" class="theme-toggle" aria-pressed="false">
-            <span class="theme-toggle__icon">🌙</span>
-        </button>
-        <button class="nav-toggle" aria-label="Open menu">
+        <a href="#" class="logo">Star Wars</a>
+
+        <button class="nav-toggle" aria-expanded="false">
             <span class="hamburger"></span>
         </button>
 
-
         <ul class="nav-links">
-            <li><a href="#" data-type="people">Characters</a></li>
-            <li><a href="#" data-type="planets">Planets</a></li>
-            <li><a href="#" data-type="films">Movies</a></li>
-            <li><a href="#" data-type="starships">Starships</a></li>
-            <li><a href="#" id="nav-favorites">★ Favorites</a></li>
+            <li><a data-type="people">People</a></li>
+            <li><a data-type="planets">Planets</a></li>
+            <li><a data-type="starships">Starships</a></li>
+            <li><a data-type="films">Films</a></li>
+            <li><a id="nav-favorites">Favorites ★</a></li>
         </ul>
+
+        <button id="theme-toggle" class="theme-toggle">
+            <span class="theme-toggle__icon">🌙</span>
+        </button>
+
     </nav>
 </header>
 
-<div id="app">
+<main id="app">
 
-    <!-- FEATURED -->
     <section id="featured" data-type="people">
         <h2>Featured</h2>
+
         <button class="nav-btn left-btn">‹</button>
         <button class="nav-btn right-btn">›</button>
 
         <div class="featured-list"></div>
     </section>
 
-    <!-- FAVORITES -->
     <section id="favorites" style="display:none;">
-        <h2>Favorites</h2>
+        <h2>Your Favorites</h2>
         <div id="favorites-container"></div>
     </section>
 
-    <!-- DETAILS -->
     <section id="detail" style="display:none;">
         <button id="back-btn" class="back-btn">← Back</button>
-        <div id="detail-container"></div>
+        <div id="detail-container" class="detail-container"></div>
     </section>
 
-</div>
+    <div id="offlineBanner" hidden>Offline mode – some data may be cached only.</div>
 
+</main>
+
+<script type="module" src="/src/js/nav.js"></script>
 <script type="module" src="/src/js/main.js"></script>
 
 </body>

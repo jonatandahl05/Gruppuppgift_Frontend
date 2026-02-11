@@ -4,11 +4,13 @@ export function initNav() {
 
     if (!navToggle || !navLinks) return;
 
-    const overlay = document.createElement('div');
-    overlay.classList.add('nav-overlay');
-    document.body.appendChild(overlay);
+    let overlay = document.querySelector('.nav-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.classList.add('nav-overlay');
+        document.body.appendChild(overlay);
+    }
 
-    // Toggle-funktion (lokal, inte exporterad)
     function toggleMenu() {
         const isOpen = navToggle.classList.toggle('active');
         navLinks.classList.toggle('active');
@@ -18,13 +20,28 @@ export function initNav() {
         document.body.style.overflow = isOpen ? 'hidden' : '';
     }
 
-    navLinks.querySelectorAll('a').forEach(link => {
+    // 🔹 NYTT: koppla nav-länkar till appen
+    navLinks.querySelectorAll('a[data-type]').forEach(link => {
         link.addEventListener('click', () => {
+            const type = link.dataset.type;
+            window.dispatchEvent(new CustomEvent("show-featured", {
+                detail: { type }
+            }));
             if (navLinks.classList.contains('active')) {
                 toggleMenu();
             }
         });
     });
+
+    // Favorites-länken får bara stänga menyn (main.js sköter sidan)
+    const favLink = document.getElementById("nav-favorites");
+    if (favLink) {
+        favLink.addEventListener("click", () => {
+            if (navLinks.classList.contains("active")) {
+                toggleMenu();
+            }
+        });
+    }
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navLinks.classList.contains('active')) {
@@ -35,3 +52,5 @@ export function initNav() {
     navToggle.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
 }
+
+document.addEventListener("DOMContentLoaded", initNav);

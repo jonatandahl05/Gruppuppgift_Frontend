@@ -203,13 +203,28 @@ button:hover {
   align-items: center;
   padding: var(--spacing-sm) 0;
 }
+.nav-links a {
+    cursor: pointer;
+}
+
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  text-decoration: none;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    transition: transform 0.3s ease, color 0.3s ease;
 }
+
+.logo:hover {
+    transform: translateY(-3px) skewX(-5deg);
+    color: var(--color-accent);
+    cursor: pointer;
+}
+
 
 .nav-toggle {
   display: block;
@@ -305,22 +320,23 @@ button:hover {
 }
 
 .nav-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 999;
 }
 
 .nav-overlay.active {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
+
 
 /* =====================================================
    6) FEATURED
@@ -677,3 +693,4 @@ html.dark-theme .offline-banner {
     flex-shrink: 0 !important;
     scroll-snap-align: center !important;
 }
+

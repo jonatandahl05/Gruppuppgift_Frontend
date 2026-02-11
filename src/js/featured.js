@@ -1,20 +1,4 @@
-function toggleFavorite(item) {
-    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    const exists = favorites.some(f => f.id === item.id && f.type === item.type);
-
-    if (exists) {
-        favorites = favorites.filter(f => !(f.id === item.id && f.type === item.type));
-    } else {
-        favorites.push(item);
-    }
-
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-}
-
-function isFavorite(id, type) {
-    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    return favorites.some(f => f.id === id && f.type === type);
-}
+import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
 
 export function getImage(type, id) {
     const base = "https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img";
@@ -41,7 +25,7 @@ const endpoints = {
 };
 
 export function openDetail(type, id) {
-    window.dispatchEvent(new CustomEvent("open-detail", { detail: { type, id } }));
+    window.dispatchEvent(new CustomEvent("open-detail", { detail: { type, id: String(id) } }));
 }
 
 export async function loadFeatured() {
@@ -50,12 +34,13 @@ export async function loadFeatured() {
 
     container.innerHTML = "";
 
-    const type = section.dataset.type;
+    const type = normalizeType(section.dataset.type);
     const ids = popular[type];
     const endpoint = endpoints[type];
 
-    for (const id of ids) {
-        const res = await fetch(`${endpoint}${id}/`);
+    for (const idNum of ids) {
+        const id = String(idNum);
+        const res = await fetch(`${endpoint}${idNum}/`);
         const data = await res.json();
 
         const item = { id, type, name: data.name || data.title };
@@ -69,33 +54,27 @@ export async function loadFeatured() {
 
             <div class="card-actions">
                 <button class="view-btn">View more</button>
-                <button class="fav-btn"></button>
+                <button class="fav-btn">${isFavorite(id, type) ? "★" : "☆"}</button>
             </div>
         `;
 
-        // View more
         card.querySelector(".view-btn").onclick = () => openDetail(type, id);
 
-        // Favorite
         const favBtn = card.querySelector(".fav-btn");
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-
         favBtn.onclick = () => {
             toggleFavorite(item);
             favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
         };
 
         container.appendChild(card);
-        // Scroll buttons
-        const list = document.querySelector(".featured-list");
-        const left = document.querySelector(".left-btn");
-        const right = document.querySelector(".right-btn");
-
-// Scroll one card at a time
-        const cardWidth = 180 + 16; // card width + gap
-
-        left.onclick = () => list.scrollBy({ left: -cardWidth, behavior: "smooth" });
-        right.onclick = () => list.scrollBy({ left: cardWidth, behavior: "smooth" });
-
     }
+
+    const list = document.querySelector(".featured-list");
+    const left = document.querySelector(".left-btn");
+    const right = document.querySelector(".right-btn");
+
+    const cardWidth = 180 + 16;
+
+    left.onclick = () => list.scrollBy({ left: -cardWidth, behavior: "smooth" });
+    right.onclick = () => list.scrollBy({ left: cardWidth, behavior: "smooth" });
 }
