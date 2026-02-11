@@ -23,7 +23,7 @@ function applyTheme(theme) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  
+
   const app = document.querySelector("#app");
   app.insertAdjacentHTML("afterbegin", renderNav());
   
@@ -44,6 +44,32 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem(THEME_KEY, nextTheme);
     applyTheme(nextTheme);
   });
+});
+
+window.addEventListener("nav:viewChange", (e) => {
+  const { action, resource, filter } = e.detail || {};
+
+  // 1) Navigera till favoriter
+  if (action === "favorites") {
+    window.location.href = "./favorites.html";
+    return;
+  }
+
+  // 2) “List/featured”-vy (anpassa till hur ni vill att UI ska reagera)
+  if (action === "list") {
+    window.dispatchEvent(
+      new CustomEvent("featured:setType", { detail: { type: resource } })
+    );
+    return;
+  }
+
+  // 3) Filter-läge
+  if (action === "filter") {
+    window.dispatchEvent(
+      new CustomEvent("featured:applyFilter", { detail: { type: resource, filter } })
+    );
+    return;
+  }
 });
 
 // -- Service Worker --

@@ -4,7 +4,7 @@ export function renderNav() {
     return `
     <header class="header">
       <nav class="container nav">
-        <a href="/" class="logo">SW</a>
+        <a href="./index.html" class="logo">SW</a>
 
         <button class="nav-toggle" 
                 aria-label="Öppna meny"
@@ -111,11 +111,11 @@ function initDesktopDropdown() {
         const mainBtn = item.querySelector(".nav-main");
         const subMenu = item.querySelector(".sub-menu");
 
-        mainBtn.addEventListener("mouseenter", () => {
+        mainBtn.addEventListener("mouseenter", () => { 
             subMenu.classList.add("open");
         });
 
-        item.addEventListener("mouseleave", () => {
+        item.addEventListener("mouseleave", () => { // <-- Detta är okej men det kan skapa flickrande, det kanske är bättre att sätta "mouseenter" på item istället för mainBtn
             subMenu.classList.remove("open");
         });
     });
