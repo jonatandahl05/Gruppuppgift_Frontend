@@ -1,24 +1,67 @@
-import { initOfflineBanner } from "./offlineBanner.js";
+import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
+import { getImage, openDetail } from "./featured.js";
 
-initOfflineBanner();
-
-
-const container = document.getElementById("favorites-container");
-
-function renderFavorites() {
+export function renderFavorites() {
+    const container = document.getElementById("favorites-container");
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
     if (favorites.length === 0) {
-        container.innerHTML = `<p>No favorites saved yet.</p>`;
+        container.innerHTML = `<p>No favorites saved yet...</p>`;
         return;
     }
 
-    container.innerHTML = favorites.map(item => `
-        <div class="card">
-            <h3>${item.name}</h3>
-            <p>${item.type}</p>
-        </div>
-    `).join("");
-}
+    const groups = {
+        people: [],
+        planets: [],
+        starships: [],
+        films: []
+    };
 
-renderFavorites();
+    favorites.forEach(f => {
+        const type = normalizeType(f.type);
+        if (groups[type]) groups[type].push(f);
+    });
+
+    container.innerHTML = Object.entries(groups)
+        .filter(([_, items]) => items.length > 0)
+        .map(([type, items]) => `
+            <h2 style="margin-top:1.5rem; text-transform:capitalize;">${type}</h2>
+
+            <div class="favorites-wrapper">
+                <div class="favorites-list">
+                    ${items.map(item => `
+                        <div class="featured-card" 
+                             data-id="${item.id}" 
+                             data-type="${item.type}">
+                             
+                            <img src="${getImage(item.type, item.id)}">
+                            <h3>${item.name}</h3>
+
+                            <div class="card-actions">
+                                <button class="view-btn">View more</button>
+                                <button class="fav-btn">${isFavorite(item.id, item.type) ? "★" : "☆"}</button>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        `).join("");
+
+    container.querySelectorAll(".featured-card").forEach(card => {
+        const id = String(card.dataset.id);
+        const type = card.dataset.type;
+        const name = card.querySelector("h3").textContent;
+
+        const item = { id, type, name };
+
+        const viewBtn = card.querySelector(".view-btn");
+        const favBtn = card.querySelector(".fav-btn");
+
+        viewBtn.onclick = () => openDetail(type, id);
+
+        favBtn.onclick = () => {
+            toggleFavorite(item);
+            renderFavorites();
+        };
+    });
+}

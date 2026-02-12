@@ -3,40 +3,29 @@ import "./featured.js";
 import { renderNav, initNav } from "./nav.js";
 import { initOfflineBanner } from "./offlineBanner.js";
 
-const THEME_KEY = "theme"; // "dark" | "light"
-const DARK_CLASS = "dark-theme"; // must match your CSS selector
-
-initOfflineBanner();
-
-function applyTheme(theme) {
-  const isDark = theme === "dark";
-
-  // Use ONE place for the class; here we use <html> (documentElement)
-  document.documentElement.classList.toggle(DARK_CLASS, isDark);
-
-  const btn = document.getElementById("theme-toggle");
-  if (btn) btn.setAttribute("aria-pressed", String(isDark));
-
-  const icon = document.querySelector("#theme-toggle .theme-toggle__icon");
-  // If dark is ON, show sun (meaning: click to go light). If light is ON, show moon.
-  if (icon) icon.textContent = isDark ? "☀️" : "🌙";
-}
-
 document.addEventListener("DOMContentLoaded", () => {
+    initOfflineBanner();
 
   const app = document.querySelector("#app");
   app.insertAdjacentHTML("afterbegin", renderNav());
   
   initNav();
 
-  const saved = localStorage.getItem(THEME_KEY);
-  const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
-  const initialTheme = saved ?? (prefersDark ? "dark" : "light");
-  applyTheme(initialTheme);
+    function initThemeToggle() {
+        const btn = document.getElementById("theme-toggle");
+        if (!btn) return;
 
-  const btn = document.getElementById("theme-toggle");
-  if (!btn) return;
+        const saved = localStorage.getItem("theme");
+        if (saved === "dark") {
+            document.documentElement.classList.add("dark-theme");
+            btn.querySelector(".theme-toggle__icon").textContent = "☀️";
+        }
 
+        btn.onclick = () => {
+            const isDark = document.documentElement.classList.toggle("dark-theme");
+            btn.querySelector(".theme-toggle__icon").textContent = isDark ? "☀️" : "🌙";
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+        };
   btn.addEventListener("click", () => {
     // IMPORTANT: check the same place you toggle the class
     const isDarkNow = document.documentElement.classList.contains(DARK_CLASS);
@@ -81,5 +70,43 @@ if ("serviceWorker" in navigator) {
     } catch (err) {
       console.error("Service Worker registration failed ❌", err);
     }
-  });
-}
+    initThemeToggle();
+
+
+    const featured = document.getElementById("featured");
+    const favorites = document.getElementById("favorites");
+    const detail = document.getElementById("detail");
+
+    function show(section) {
+        featured.style.display = "none";
+        favorites.style.display = "none";
+        detail.style.display = "none";
+        section.style.display = "block";
+    }
+
+    document.getElementById("nav-favorites").onclick = () => {
+        import("./favorites.js").then(m => m.renderFavorites());
+        show(favorites);
+    };
+
+    window.addEventListener("open-detail", (e) => {
+        const { type, id } = e.detail;
+        import("./detail.js").then(m => m.renderDetail(type, id));
+        show(detail);
+    });
+
+    window.addEventListener("show-featured", (e) => {
+        const { type } = e.detail;
+        featured.dataset.type = type;
+        import("./featured.js").then(m => m.loadFeatured());
+        show(featured);
+    });
+
+    import("./featured.js").then(m => {
+        m.loadFeatured();
+        show(featured);
+    });
+
+    const backBtn = document.getElementById("back-btn");
+    if (backBtn) backBtn.onclick = () => show(featured);
+});
