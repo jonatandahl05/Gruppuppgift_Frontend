@@ -123,14 +123,6 @@ a:focus-visible {
   border: 0;
 }
 
-.offline-banner {
-  background: #b91c1c;
-  color: white;
-  padding: 0.75rem;
-  border-radius: var(--radius);
-  margin-bottom: 1rem;
-}
-
 /* =====================================================
    4) BUTTONS
    ===================================================== */
