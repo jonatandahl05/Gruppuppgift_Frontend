@@ -3,72 +3,71 @@
    ===================================================== */
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html,
 body {
-  min-height: 100%;
+    min-height: 100%;
 }
 
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  line-height: 1.5;
-  overflow-x: hidden;
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
 }
 
 /*Root för dark theme*/
 
 :root {
-  /* Colors */
-  --color-bg: #f8fafc;
-  --color-surface: #ffffff;
-  --color-text: #1e293b;
-  --color-text-muted: #64748b;
-  --color-border: #e2e8f0;
+    /* Colors */
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-text: #1e293b;
+    --color-text-muted: #64748b;
+    --color-border: #e2e8f0;
 
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
 
-  --color-accent: #0ea5e9;
-  --color-accent-hover: #38bdf8;
-  --color-focus: #38bdf8;
+    --color-accent: #0ea5e9;
+    --color-accent-hover: #38bdf8;
+    --color-focus: #38bdf8;
 
-  /* Layout */
-  --radius: 10px;
-  --transition: 0.2s ease;
+    /* Layout */
+    --radius: 10px;
+    --transition: 0.2s ease;
 
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 2rem;
-  --spacing-lg: 4rem;
-  --spacing-xl: 6rem;
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 4rem;
 }
 
 html.dark-theme {
-  --color-bg: #050814;
-  --color-surface: #111827;
-  --color-text: #f5f5f5;
-  --color-text-muted: rgba(245, 245, 245, 0.7);
-  --color-border: rgba(255, 255, 255, 0.16);
+    --color-bg: #050814;
+    --color-surface: #111827;
+    --color-text: #f5f5f5;
+    --color-text-muted: rgba(245, 245, 245, 0.7);
+    --color-border: rgba(255, 255, 255, 0.16);
 
-  /* Keep brand colors readable on dark */
-  --color-primary: #60a5fa;
-  --color-primary-dark: #3b82f6;
+    /* Keep brand colors readable on dark */
+    --color-primary: #60a5fa;
+    --color-primary-dark: #3b82f6;
 
-  --color-accent: #facc15;
-  --color-accent-hover: #fde047;
+    --color-accent: #facc15;
+    --color-accent-hover: #fde047;
 }
 
 /* Apply theme to page */
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
+    background-color: var(--color-bg);
+    color: var(--color-text);
 }
 
 a {
-  color: inherit;
+    color: inherit;
 }
 
 /* =====================================================
@@ -76,29 +75,29 @@ a {
    ===================================================== */
 
 .container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-sm);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-sm);
 }
 
 #app {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 100px var(--spacing-sm) 0; /* space for fixed header */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px var(--spacing-sm) 0; /* space for fixed header */
 }
 
 /* Typografi */
 h1,
 h2,
 h3 {
-  margin: 0 0 0.5rem;
-  font-weight: 700;
+    margin: 0 0 0.5rem;
+    font-weight: 700;
 }
 
 p {
-  margin: 0 0 0.75rem;
+    margin: 0 0 0.75rem;
 }
 
 /* =====================================================
@@ -107,71 +106,62 @@ p {
 
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
 }
 
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
+
 
 /* =====================================================
    4) BUTTONS
    ===================================================== */
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
-}
-
-/* Primary button look */
-button {
-  background-color: var(--color-accent);
-  color: #111;
-  box-shadow: 0 0 4px var(--color-accent), 0 0 8px var(--color-accent);
-  text-shadow: 0 0 2px var(--color-accent);
-}
-
-button:hover {
-  background-color: var(--color-accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 0 6px var(--color-accent), 0 0 12px var(--color-accent), 0 0 18px var(--color-accent);
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: var(--color-accent);
+    color: #111;
+    box-shadow: 0 0 4px var(--color-accent), 0 0 8px var(--color-accent);
+    text-shadow: 0 0 2px var(--color-accent);
+    transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
 }
 
 /* Theme toggle button: keep it subtle compared to primary CTA */
 .theme-toggle {
-  margin-left: auto;
-  border: 1px solid var(--color-border);
-  background: transparent;
-  color: var(--color-text);
-  box-shadow: none;
-  text-shadow: none;
-  padding: 8px 10px;
-  border-radius: 10px;
+    margin-left: auto;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text);
+    box-shadow: none;
+    text-shadow: none;
+    padding: 8px 10px;
+    border-radius: 10px;
 }
 
 .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-1px);
-  box-shadow: none;
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
+    box-shadow: none;
 }
 
 .theme-toggle__icon {
-  font-size: 18px;
-  line-height: 1;
+    font-size: 18px;
+    line-height: 1;
 }
 
 /* =====================================================
@@ -179,21 +169,21 @@ button:hover {
    ===================================================== */
 
 .header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: color-mix(in srgb, var(--color-surface) 95%, transparent);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--color-border);
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: color-mix(in srgb, var(--color-surface) 95%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 1000;
 }
 
 .nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-sm) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
 }
 .nav-links a {
     cursor: pointer;
@@ -219,96 +209,91 @@ button:hover {
 
 
 .nav-toggle {
-  display: block;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 12px;
-  min-width: 44px;
-  min-height: 44px;
-  z-index: 1001;
-  box-shadow: none;
-  text-shadow: none;
+    display: block;
+    padding: 12px;
+    min-width: 44px;
+    min-height: 44px;
+    z-index: 1001;
 }
 
 .hamburger {
-  display: block;
-  width: 32px;
-  height: 4px;
-  background-color: var(--color-text);
-  position: relative;
-  border-radius: 2px;
-  transition: background-color 0.3s ease;
+    display: block;
+    width: 32px;
+    height: 4px;
+    background-color: var(--color-text);
+    position: relative;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
 }
 
 .hamburger::before,
 .hamburger::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  width: 32px;
-  height: 4px;
-  background-color: var(--color-text);
-  border-radius: 2px;
-  transition: transform 0.3s ease;
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 4px;
+    background-color: var(--color-text);
+    border-radius: 2px;
+    transition: transform 0.3s ease;
 }
 
 .hamburger::before {
-  top: -10px;
+    top: -10px;
 }
 
 .hamburger::after {
-  top: 10px;
+    top: 10px;
 }
 
 .nav-toggle.active .hamburger {
-  background-color: transparent;
+    background-color: transparent;
 }
 
 .nav-toggle.active .hamburger::before {
-  transform: rotate(45deg);
-  top: 0;
+    transform: rotate(45deg);
+    top: 0;
 }
 
 .nav-toggle.active .hamburger::after {
-  transform: rotate(-45deg);
-  top: 0;
+    transform: rotate(-45deg);
+    top: 0;
 }
 
 .nav-links {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 70%;
-  max-width: 300px;
-  height: 100vh;
-  background-color: var(--color-surface);
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: var(--spacing-md);
-  list-style: none;
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 70%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: var(--color-surface);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    list-style: none;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
 }
 
 .nav-links.active {
-  transform: translateX(0);
+    transform: translateX(0);
 }
 
 .nav-links a {
-  text-decoration: none;
-  color: var(--color-text);
-  font-weight: 500;
-  font-size: 1.25rem;
-  padding: var(--spacing-sm);
-  transition: color 0.2s ease;
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 500;
+    font-size: 1.25rem;
+    padding: var(--spacing-sm);
+    transition: color 0.2s ease;
 }
 
 .nav-links a:hover {
-  color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .nav-overlay {
@@ -335,48 +320,48 @@ button:hover {
    ===================================================== */
 
 #featured {
-  padding: 1rem 0;
-  position: relative;
+    padding: 1rem 0;
+    position: relative;
 }
 
 #featured h2 {
-  margin-bottom: 0.8rem;
-  font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+    font-size: 1.8rem;
 }
 
 .featured-list {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  padding-bottom: 1rem;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding-left: calc(50vw - 90px);
-  padding-right: calc(50vw - 90px);
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-left: calc(50vw - 90px);
+    padding-right: calc(50vw - 90px);
 }
 
 .featured-card {
-  min-width: 180px;
-  background: var(--color-surface);
-  padding: 1rem;
-  border-radius: var(--radius);
-  flex-shrink: 0;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  border: 1px solid var(--color-border);
-  scroll-snap-align: center;
+    min-width: 180px;
+    background: var(--color-surface);
+    padding: 1rem;
+    border-radius: var(--radius);
+    flex-shrink: 0;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--color-border);
+    scroll-snap-align: center;
 }
 
 .featured-card img {
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  object-fit: cover;
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    object-fit: cover;
 }
 
 .featured-card button {
-  margin-top: 0.5rem;
-  padding: 0.4rem 0.8rem;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
 }
 
 .sub-menu.active {
@@ -385,30 +370,26 @@ button:hover {
 
 /* Featured – navigation (mobile) */
 .nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--color-text);
-  font-size: 1.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  transition: background var(--transition), transform var(--transition);
-  z-index: 20;
-  box-shadow: none;
-  text-shadow: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--color-text);
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: background var(--transition), transform var(--transition);
+    z-index: 20;
 }
 
 .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-50%) scale(1.05);
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-50%) scale(1.05);
 }
 
 .nav-item {
@@ -456,46 +437,11 @@ button:hover {
 }
 
 .left-btn {
-  left: 0.3rem;
+    left: 0.3rem;
 }
 
 .right-btn {
-  right: 0.3rem;
-}
-
-/* =====================================================
-   7) CARDS (list/grid)
-   ===================================================== */
-
-.card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: var(--spacing-md);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  border-color: var(--color-primary);
-}
-
-.card h3 {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 1.3rem;
-}
-
-.card p {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
+    right: 0.3rem;
 }
 
 /* =====================================================
@@ -503,64 +449,61 @@ button:hover {
    ===================================================== */
 
 .detail-container {
-  background: var(--color-surface);
-  padding: 1.5rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    background: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .detail-container img {
-  width: 100%;
-  max-width: 350px;
-  border-radius: var(--radius);
-  display: block;
-  margin: 0 auto 1rem;
+    width: 100%;
+    max-width: 350px;
+    border-radius: var(--radius);
+    display: block;
+    margin: 0 auto 1rem;
 }
 
 .detail-container h1 {
-  text-align: center;
-  margin-bottom: 1rem;
+    text-align: center;
+    margin-bottom: 1rem;
 }
 
 .detail-info {
-  display: grid;
-  gap: 0.8rem;
-  margin-top: 1rem;
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 1rem;
 }
 
 .detail-info div {
-  background: color-mix(in srgb, var(--color-text) 6%, transparent);
-  padding: 0.8rem;
-  border-radius: var(--radius);
-  border-left: 4px solid var(--color-accent);
+    background: color-mix(in srgb, var(--color-text) 6%, transparent);
+    padding: 0.8rem;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--color-accent);
 }
 
 .label {
-  font-weight: 700;
-  color: var(--color-text);
+    font-weight: 700;
+    color: var(--color-text);
 }
 
 .back-btn {
-  display: inline-block;
-  padding: 0.6rem 1.2rem;
-  margin-bottom: 10px;
-  background: transparent;
-  border: 2px solid var(--color-accent);
-  color: var(--color-accent);
-  font-weight: 600;
-  border-radius: 6px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: 0.25s ease;
-  text-shadow: none;
-  box-shadow: 0 0 6px color-mix(in srgb, var(--color-accent) 40%, transparent);
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    margin-bottom: 10px;
+    border: 2px solid var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.25s ease;
+    box-shadow: 0 0 6px color-mix(in srgb, var(--color-accent) 40%, transparent);
 }
 
 .back-btn:hover {
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-  box-shadow: 0 0 6px var(--color-accent), 0 0 12px var(--color-accent), 0 0 18px var(--color-accent);
-  transform: translateY(-2px);
+    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    box-shadow: 0 0 6px var(--color-accent), 0 0 12px var(--color-accent), 0 0 18px var(--color-accent);
+    transform: translateY(-2px);
 }
 
 /* =====================================================
@@ -569,107 +512,88 @@ button:hover {
 
 /* Hide featured arrows on tablet/desktop */
 @media (min-width: 640px) {
-  .nav-btn {
-    display: none;
-  }
+    .nav-btn {
+        display: none;
+    }
 
-  .featured-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    overflow-x: visible;
-    padding-left: 0;
-    padding-right: 0;
-  }
+    .featured-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        overflow-x: visible;
+        padding-left: 0;
+        padding-right: 0;
+    }
 
-  .featured-card {
-    min-width: 0;
-    scroll-snap-align: unset;
-  }
+    .featured-card {
+        min-width: 0;
+        scroll-snap-align: unset;
+    }
 }
 
 @media (min-width: 768px) {
-  .nav-toggle {
-    display: none;
-  }
+    .nav-toggle {
+        display: none;
+    }
 
-  .nav-links {
-    align-items: center;
-    height: auto;
-    width: auto;
-    max-width: none;
-    flex-direction: row;
-    justify-content: flex-end;
-    transform: none;
-    box-shadow: none;
-    background: none;
-    gap: var(--spacing-md);
-    position: static;
-  }
+    .nav-links {
+        align-items: center;
+        height: auto;
+        width: auto;
+        max-width: none;
+        flex-direction: row;
+        justify-content: flex-end;
+        transform: none;
+        box-shadow: none;
+        background: none;
+        gap: var(--spacing-md);
+        position: static;
+    }
 
-  .nav-links a {
-    font-size: 1rem;
-    padding: 0;
-  }
+    .nav-links a {
+        font-size: 1rem;
+        padding: 0;
+    }
 
-  .nav-overlay {
-    display: none;
-  }
-
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
-  }
+    .nav-overlay {
+        display: none;
+    }
 }
 
 @media (min-width: 1024px) {
-  #app {
-    padding-top: 110px;
-  }
+    #app {
+        padding-top: 110px;
+    }
 
-  #featured h2 {
-    font-size: 2rem;
-  }
-
-  .card-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+    #featured h2 {
+        font-size: 2rem;
+    }
 }
 
 .offline-banner {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  padding: 0.75rem 1rem;
-  text-align: center;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 165, 0, 0.15);
-  backdrop-filter: blur(6px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 165, 0, 0.15);
+    backdrop-filter: blur(6px);
 }
 
 html.dark-theme .offline-banner {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .fav-btn {
-    background: none !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    appearance: none !important;
-
-    cursor: pointer;
     font-size: 1.2rem;
     color: var(--color-text);
     padding: 0;
     margin: 0;
     line-height: 1;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     transition: color 0.25s ease, transform 0.25s ease;
 }
 
@@ -718,19 +642,17 @@ html.dark-theme .offline-banner {
 }
 /* FAVORITES EXACT SAME SIZE AS FEATURED */
 .favorites-list {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 1rem !important;
-    overflow-x: auto !important;
-    padding: 1rem 0 !important;
-    scroll-snap-type: x mandatory !important;
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    scroll-snap-type: x mandatory;
 }
 
 .favorites-list .featured-card {
-    width: 180px !important;
-    min-width: 180px !important;
-    max-width: 180px !important;
-    flex-shrink: 0 !important;
-    scroll-snap-align: center !important;
+    width: 180px;
+    min-width: 180px;
+    flex-shrink: 0;
+    scroll-snap-align: center;
 }
 
