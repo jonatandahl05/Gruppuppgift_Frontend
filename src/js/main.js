@@ -50,31 +50,38 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.addEventListener("nav:viewChange", (e) => {
     const { action, resource, filter } = e.detail || {};
 
-    // Favorites view
+    // 1) Favourites
     if (action === "favorites") {
       import("./favorites.js").then((m) => m.renderFavorites());
       show(favorites);
       return;
     }
 
-    // List/Featured byter typ (people/planets/films/starships)
-    if (action === "list" || action === "featured") {
-      if (resource && featured) featured.dataset.type = resource;
-      import("./featured.js").then((m) => m.loadFeatured());
+    // Safety: måste finnas
+    if (!resource) return;
+
+    // Uppdatera vilken resurs som visas
+    if (featured) featured.dataset.type = resource;
+
+    // 2) All
+    if (action === "list") {
+      import("./featured.js").then((m) => m.loadAll(resource));
       show(featured);
       return;
     }
 
-    // Filter (om ni vill stödja filter senare)
+    // 3) Dark/Light filter
     if (action === "filter") {
-      // Just nu: behandla som list + spara filter i dataset om ni vill använda det senare
-      if (resource && featured) featured.dataset.type = resource;
-      if (featured) featured.dataset.filter = filter || "";
-      import("./featured.js").then((m) => m.loadFeatured());
+      import("./featured.js").then((m) => m.loadFiltered(resource, filter));
       show(featured);
       return;
     }
+
+    // Default fallback
+    import("./featured.js").then((m) => m.loadFeatured());
+    show(featured);
   });
+
 });
 
 function initThemeToggle() {
