@@ -1,273 +1,86 @@
-// ===============================
-// Bildkällor (GitHub mirror)
-// ===============================
-function getImage(type, id) {
-    const base = "https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img";
+import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
 
-    const paths = {
-        people: `${base}/characters/${id}.jpg`,
-        planets: `${base}/planets/${id}.jpg`,
-        starships: `${base}/starships/${id}.jpg`,
-        films: `${base}/films/${id}.jpg`
-    };
-
-    return paths[type];
+export function getImage(type, id) {
+  const base =
+    "https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img";
+  return {
+    people: `${base}/characters/${id}.jpg`,
+    planets: `${base}/planets/${id}.jpg`,
+    starships: `${base}/starships/${id}.jpg`,
+    films: `${base}/films/${id}.jpg`,
+  }[type];
 }
 
-// Hämta id från url
-
-function extractId(url) {
-    // URL ser ut som: "https://swapi.py4e.com/api/people/1/"
-    const matches = url.match(/\/(\d+)\/$/);
-    return matches ? matches[1] : null;
-}
-
-// ===============================
-// Populära ID:n
-// ===============================
 const popular = {
-    people: [1, 4, 5, 10, 11],
-    planets: [1, 2, 3, 4, 5],
-    starships: [9, 10, 11, 12, 13],
-    films: [1, 2, 3, 4, 5]
+  people: [1, 4, 5, 10, 11],
+  planets: [1, 2, 3, 4, 5],
+  starships: [9, 10, 11],
+  films: [1, 2, 3],
 };
 
-// ===============================
-// API-endpoints
-// ===============================
 const endpoints = {
-    people: "https://swapi.py4e.com/api/people/",
-    planets: "https://swapi.py4e.com/api/planets/",
-    starships: "https://swapi.py4e.com/api/starships/",
-    films: "https://swapi.py4e.com/api/films/"
+  people: "https://swapi.py4e.com/api/people/",
+  planets: "https://swapi.py4e.com/api/planets/",
+  starships: "https://swapi.py4e.com/api/starships/",
+  films: "https://swapi.py4e.com/api/films/",
 };
 
-
-// Current view
-let currentView = {
-    action: "featured",
-    resource: "people",
-    filter: ""
-};
-
-
-// ===============================
-// Öppna detaljsida
-// ===============================
-function openDetail(type, id) {
-    window.location.href = `detail.html?type=${type}&id=${id}`;
+export function openDetail(type, id) {
+  window.dispatchEvent(
+    new CustomEvent("open-detail", { detail: { type, id: String(id) } })
+  );
 }
 
-// Skapa ett kort
-function createCard(data, type, id) {
+export async function loadFeatured() {
+  const section = document.querySelector("#featured");
+  const container = document.querySelector(".featured-list");
+  if (!section || !container) return;
+
+  container.innerHTML = "";
+
+  const type = normalizeType(section.dataset.type);
+  const ids = popular[type];
+  const endpoint = endpoints[type];
+  if (!ids || !endpoint) return;
+
+  for (const idNum of ids) {
+    const id = String(idNum);
+    const res = await fetch(`${endpoint}${idNum}/`);
+    const data = await res.json();
+
+    const item = { id, type, name: data.name || data.title };
+
     const card = document.createElement("div");
     card.classList.add("featured-card");
 
     card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}"
-            alt="${data.name || data.title}"
-            onerror="this.onerror=null; this.src='/star-wars.png';"
-        />
-        <h3>${data.name || data.title}</h3>
-        <button type="button">View more</button>
+      <img src="${getImage(type, id)}" alt="${item.name}">
+      <h3>${item.name}</h3>
+
+      <div class="card-actions">
+        <button class="view-btn" type="button">View more</button>
+        <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+      </div>
     `;
 
-    card.querySelector("button").addEventListener("click", () => openDetail(type, id));
+    card.querySelector(".view-btn").onclick = () => openDetail(type, id);
 
-    return card;
-}
-
-// Uppdatera titel på sidan
-function updateTitle(action, resource, filter) {
-    const titleEl = document.querySelector("#featured-title");
-    if (!titleEl) return;
-
-    const resourceNames = {
-        people: "Characters",
-        planets: "Planets",
-        starships: "Starships",
-        films: "Movies"
+    const favBtn = card.querySelector(".fav-btn");
+    favBtn.onclick = () => {
+      toggleFavorite(item);
+      favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
     };
 
-    if (action === "favorites") {
-        titleEl.textContent = "Your Favourites";
-    } else if (action === "filter" && filter) {
-        const filterName = filter.charAt(0).toUpperCase() + filter.slice(1);
-        titleEl.textContent = `${filterName} Side Characters`;
-    } else if (action === "list") {
-        titleEl.textContent = `All ${resourceNames[resource] || resource}`;
-    } else {
-        titleEl.textContent = `Featured ${resourceNames[resource] || resource}`;
-    }
+    container.appendChild(card);
+  }
+
+  const list = document.querySelector(".featured-list");
+  const left = document.querySelector(".left-btn");
+  const right = document.querySelector(".right-btn");
+
+  if (list && left && right) {
+    const cardWidth = 180 + 16;
+    left.onclick = () => list.scrollBy({ left: -cardWidth, behavior: "smooth" });
+    right.onclick = () => list.scrollBy({ left: cardWidth, behavior: "smooth" });
+  }
 }
-
-
-// Ladda ALL från API (för "All"-knappen)
-async function loadAll(type) {
-    const container = document.querySelector(".featured-list");
-    const endpoint = endpoints[type];
-
-    if (!container || !endpoint) return;
-
-    container.innerHTML = '<p class="loading">Loading...</p>';
-
-    try {
-        let allResults = [];
-        let nextUrl = endpoint;
-
-        while (nextUrl) {
-            const res = await fetch(nextUrl);
-            const data = await res.json();
-            allResults = allResults.concat(data.results);
-            nextUrl = data.next;
-
-            // Begränsa till 18
-            if (allResults.length >= 18) break;
-        }
-
-        container.innerHTML = "";
-
-        for (const item of allResults) {
-            const id = extractId(item.url);
-            if (id) {
-                const card = createCard(item, type, id);
-                container.appendChild(card);
-            }
-        }
-
-    } catch (err) {
-        console.error("Error loading all:", err);
-        container.innerHTML = '<p class="error">Could not load data. Try again later.</p>';
-    }
-}
-
-// Ladda Featured (populära)
-async function loadFeatured(type) {
-    const container = document.querySelector(".featured-list");
-    const ids = popular[type];
-    const endpoint = endpoints[type];
-
-    if (!container || !ids || !endpoint) return;
-
-    container.innerHTML = '<p class="loading">Loading...</p>';
-
-    try {
-        container.innerHTML = "";
-
-        for (const id of ids) {
-            const res = await fetch(`${endpoint}${id}/`);
-            const data = await res.json();
-            const card = createCard(data, type, id);
-            container.appendChild(card);
-        }
-    } catch (err) {
-        console.error("Error loading featured:", err);
-        container.innerHTML = '<p class="error">Could not load data.</p>';
-    }
-}
-
-
-// Ladda med filter (Dark/Light Side)
-async function loadFiltered(type, filter) {
-    const container = document.querySelector(".featured-list");
-    const endpoint = endpoints[type];
-
-    if (!container || !endpoint) return;
-
-    container.innerHTML = '<p class="loading">Loading...</p>';
-
-    const darkSideNames = ["vader", "darth", "sidious", "palpatine", "maul", "dooku", "kylo"];
-    const lightSideNames = ["luke", "leia", "obi-wan", "yoda", "rey", "finn", "han", "chewbacca"];
-
-    try {
-        const res = await fetch(endpoint);
-        const data = await res.json();
-
-        container.innerHTML = "";
-
-        for (const item of data.results) {
-            const name = (item.name || item.title || "").toLowerCase();
-            const id = extractId(item.url);
-
-            let matches = false;
-
-            if (filter === "dark") {
-                matches = darkSideNames.some(dark => name.includes(dark));
-            } else if (filter === "light") {
-                matches = lightSideNames.some(light => name.includes(light));
-            }
-
-            if (matches && id) {
-                const card = createCard(item, type, id);
-                container.appendChild(card);
-            }
-        }
-
-        if (container.children.length === 0) {
-            container.innerHTML = '<p class="no-results">No characters found for this filter.</p>';
-        }
-
-    } catch (err) {
-        console.error("Error loading filtered:", err);
-        container.innerHTML = '<p class="error">Could not load data.</p>';
-    }
-}
-
-
-// Handle viewchange
-export async function handleViewChange(action, resource, filter) {
-    currentView = { action, resource, filter };
-
-    updateTitle(action, resource, filter);
-
-    switch (action) {
-        case "list":
-            await loadAll(resource);
-            break;
-
-        case "filter":
-            await loadFiltered(resource, filter);
-            break;
-
-        case "favorites":
-            loadFavorites();
-            break;
-
-        default:
-            await loadFeatured(resource);
-            break;
-    }
-}
-
-
-// addEventlistener på nav viewchange
-window.addEventListener("nav:viewChange", (e) => {
-    const { action, resource, filter } = e.detail;
-    handleViewChange(action, resource, filter);
-});
-
-// Init – första laddning
-loadFeatured("people");
-
-
-// ===============================
-// Navigera mellan kort (mobile)
-// ===============================
-document.addEventListener("DOMContentLoaded", () => {
-    const list = document.querySelector(".featured-list");
-    const leftBtn = document.querySelector(".left-btn");
-    const rightBtn = document.querySelector(".right-btn");
-
-    if (list && leftBtn && rightBtn) {
-        rightBtn.addEventListener("click", () => {
-            const cardWidth = list.querySelector(".featured-card")?.offsetWidth + 16 || 200;
-            list.scrollBy({ left: cardWidth, behavior: "smooth" });
-        });
-
-        leftBtn.addEventListener("click", () => {
-            const cardWidth = list.querySelector(".featured-card")?.offsetWidth + 16 || 200;
-            list.scrollBy({ left: -cardWidth, behavior: "smooth" });
-        });
-    }
-});
