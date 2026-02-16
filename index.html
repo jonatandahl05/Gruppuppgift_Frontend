@@ -1,25 +1,50 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#0b0f1a">
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#0b0f1a" />
 
     <title>Galactic Dex</title>
   </head>
+
   <body>
-  <div id="app"> <!-- Header kommer här  -->
-      <!-- Featured sektion -->
+    <!-- Nav injiceras här av main.js -->
+    <div id="app"></div>
+
+    <main>
       <section id="featured" aria-labelledby="featured-title" data-type="people">
-          <h2 id="featured-title">Featured</h2>
-          <button class="nav-btn left-btn">‹</button> <button class="nav-btn right-btn">›</button>
-          <div class="featured-list">
-          </div>
+        <h2 id="featured-title">Featured</h2>
+
+        <button class="nav-btn left-btn" type="button">‹</button>
+        <button class="nav-btn right-btn" type="button">›</button>
+
+        <div class="featured-list"></div>
       </section>
-  </div>
-      <a id="top"></a>
+
+      <section id="favorites" style="display: none;">
+        <h2>Your Favorites</h2>
+        <div id="favorites-container"></div>
+      </section>
+
+      <section id="detail" style="display: none;">
+        <button id="back-btn" class="back-btn" type="button">← Back</button>
+        <div id="detail-container" class="detail-container"></div>
+      </section>
+
+      <div
+        id="offlineBanner"
+        class="offline-banner"
+        role="alert"
+        aria-live="polite"
+        hidden
+      >
+        Du är offline – viss data kanske inte är uppdaterad.
+      </div>
+    </main>
+
     <script type="module" src="/src/js/main.js"></script>
   </body>
 </html>

@@ -6,8 +6,6 @@ const API_CACHE = `api-${VERSION}`;
 const PRECACHE_URLS = [
   "./",
   "./index.html",
-  "./detail.html",
-  "./favorites.html",
   "./manifest.json",
   "./star-wars.png"
 ];

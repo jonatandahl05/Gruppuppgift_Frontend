@@ -1,78 +1,109 @@
 import "../css/style.css";
-import "./featured.js";
 import { renderNav, initNav } from "./nav.js";
 import { initOfflineBanner } from "./offlineBanner.js";
 
-const THEME_KEY = "theme"; // "dark" | "light"
-const DARK_CLASS = "dark-theme"; // must match your CSS selector
+document.addEventListener("DOMContentLoaded", async () => {
+  // 1) Offline banner
+  initOfflineBanner();
 
-initOfflineBanner();
+  // 2) Rendera nav i #app och initiera
+  const app = document.getElementById("app");
+  if (app) {
+    app.insertAdjacentHTML("afterbegin", renderNav());
+    initNav();
+  }
 
-function applyTheme(theme) {
-  const isDark = theme === "dark";
+  // 3) Theme toggle (behåll enkel variant)
+  initThemeToggle();
 
-  // Use ONE place for the class; here we use <html> (documentElement)
-  document.documentElement.classList.toggle(DARK_CLASS, isDark);
+  // 4) SPA sections
+  const featured = document.getElementById("featured");
+  const favorites = document.getElementById("favorites");
+  const detail = document.getElementById("detail");
 
-  const btn = document.getElementById("theme-toggle");
-  if (btn) btn.setAttribute("aria-pressed", String(isDark));
+  function show(section) {
+    if (!featured || !favorites || !detail) return;
 
-  const icon = document.querySelector("#theme-toggle .theme-toggle__icon");
-  // If dark is ON, show sun (meaning: click to go light). If light is ON, show moon.
-  if (icon) icon.textContent = isDark ? "☀️" : "🌙";
-}
+    featured.style.display = "none";
+    favorites.style.display = "none";
+    detail.style.display = "none";
+    section.style.display = "block";
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
+  // 5) Default: visa featured och ladda första gången
+  const featuredMod = await import("./featured.js");
+  await featuredMod.loadFeatured();
+  show(featured);
 
-  const app = document.querySelector("#app");
-  app.insertAdjacentHTML("afterbegin", renderNav());
-  
-  initNav();
+  // 6) När ett kort vill öppna detail (featured.js dispatchar open-detail)
+  window.addEventListener("open-detail", (e) => {
+    const { type, id } = e.detail || {};
+    import("./detail.js").then((m) => m.renderDetail(type, id));
+    show(detail);
+  });
 
-  const saved = localStorage.getItem(THEME_KEY);
-  const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
-  const initialTheme = saved ?? (prefersDark ? "dark" : "light");
-  applyTheme(initialTheme);
+  // 7) Back från detail
+  const backBtn = document.getElementById("back-btn");
+  if (backBtn) backBtn.onclick = () => show(featured);
 
+  // 8) NAV adapter: dropdown-nav dispatchar nav:viewChange
+  window.addEventListener("nav:viewChange", (e) => {
+    const { action, resource, filter } = e.detail || {};
+
+    // 1) Favourites
+    if (action === "favorites") {
+      import("./favorites.js").then((m) => m.renderFavorites());
+      show(favorites);
+      return;
+    }
+
+    // Safety: måste finnas
+    if (!resource) return;
+
+    // Uppdatera vilken resurs som visas
+    if (featured) featured.dataset.type = resource;
+
+    // 2) All
+    if (action === "list") {
+      import("./featured.js").then((m) => m.loadAll(resource));
+      show(featured);
+      return;
+    }
+
+    // 3) Dark/Light filter
+    if (action === "filter") {
+      import("./featured.js").then((m) => m.loadFiltered(resource, filter));
+      show(featured);
+      return;
+    }
+
+    // Default fallback
+    import("./featured.js").then((m) => m.loadFeatured());
+    show(featured);
+  });
+
+});
+
+function initThemeToggle() {
   const btn = document.getElementById("theme-toggle");
   if (!btn) return;
 
-  btn.addEventListener("click", () => {
-    // IMPORTANT: check the same place you toggle the class
-    const isDarkNow = document.documentElement.classList.contains(DARK_CLASS);
-    const nextTheme = isDarkNow ? "light" : "dark";
-    localStorage.setItem(THEME_KEY, nextTheme);
-    applyTheme(nextTheme);
-  });
-});
-
-window.addEventListener("nav:viewChange", (e) => {
-  const { action, resource, filter } = e.detail || {};
-
-  // 1) Navigera till favoriter
-  if (action === "favorites") {
-    window.location.href = "./favorites.html";
-    return;
+  const saved = localStorage.getItem("theme");
+  if (saved === "dark") {
+    document.documentElement.classList.add("dark-theme");
+    const icon = btn.querySelector(".theme-toggle__icon");
+    if (icon) icon.textContent = "☀️";
   }
 
-  // 2) “List/featured”-vy (anpassa till hur ni vill att UI ska reagera)
-  if (action === "list") {
-    window.dispatchEvent(
-      new CustomEvent("featured:setType", { detail: { type: resource } })
-    );
-    return;
-  }
+  btn.onclick = () => {
+    const isDark = document.documentElement.classList.toggle("dark-theme");
+    const icon = btn.querySelector(".theme-toggle__icon");
+    if (icon) icon.textContent = isDark ? "☀️" : "🌙";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  };
+}
 
-  // 3) Filter-läge
-  if (action === "filter") {
-    window.dispatchEvent(
-      new CustomEvent("featured:applyFilter", { detail: { type: resource, filter } })
-    );
-    return;
-  }
-});
-
-// -- Service Worker --
+// 9) Service Worker (PWA)
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {

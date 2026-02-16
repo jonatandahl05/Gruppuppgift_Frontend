@@ -203,13 +203,28 @@ button:hover {
   align-items: center;
   padding: var(--spacing-sm) 0;
 }
+.nav-links a {
+    cursor: pointer;
+}
+
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  text-decoration: none;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    transition: transform 0.3s ease, color 0.3s ease;
 }
+
+.logo:hover {
+    transform: translateY(-3px) skewX(-5deg);
+    color: var(--color-accent);
+    cursor: pointer;
+}
+
 
 .nav-toggle {
   display: block;
@@ -305,22 +320,23 @@ button:hover {
 }
 
 .nav-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 999;
 }
 
 .nav-overlay.active {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
+
 
 /* =====================================================
    6) FEATURED
@@ -642,5 +658,87 @@ button:hover {
 
 html.dark-theme .offline-banner {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fav-btn {
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    appearance: none !important;
+
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--color-text);
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.fav-btn:hover {
+    transform: scale(1.12);
+    color: var(--color-accent);
+}
+
+
+/* Fylld stjärna när aktiv */
+.fav-btn.active::before {
+    content: "★";
+    color: var(--color-accent);
+    opacity: 1;
+}
+
+.featured-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.8rem;
+}
+.featured-card .fav-btn {
+    font-size: 2.4rem; /* stor stjärna bara i featured */
+}
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.6rem;
+    gap: 0.6rem;
+}
+
+.card-actions .view-btn {
+    flex: 1; /* eller ta bort helt */
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+
+    /* knappen blir så liten som möjligt */ }
+
+.card-actions .fav-btn {
+    font-size: 1.8rem; /* lagom stor stjärna */
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+}
+/* FAVORITES EXACT SAME SIZE AS FEATURED */
+.favorites-list {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem !important;
+    overflow-x: auto !important;
+    padding: 1rem 0 !important;
+    scroll-snap-type: x mandatory !important;
+}
+
+.favorites-list .featured-card {
+    width: 180px !important;
+    min-width: 180px !important;
+    max-width: 180px !important;
+    flex-shrink: 0 !important;
+    scroll-snap-align: center !important;
 }
 
