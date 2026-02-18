@@ -21,7 +21,9 @@ export const menuData = [
         key: "starships",
         label: "Starships",
         subItems: [
-            { label: "All", action: "list", resource: "starships" }
+            { label: "All", action: "list", resource: "starships" },
+            { label: "Imperial", action: "filter", resource: "starships", filter: "imperial" },
+            { label: "Rebel", action: "filter", resource: "starships", filter: "rebel" }
         ]
     },
     {
