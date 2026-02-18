@@ -34,6 +34,11 @@ export function renderNav() {
             </li>
           `).join("")}
         </ul>
+        
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <span class="theme-toggle__icon">🌙</span>
+        </button>
+
       </nav>
     </header>
   `;
