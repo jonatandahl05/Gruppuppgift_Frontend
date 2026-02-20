@@ -3,114 +3,96 @@ import { renderNav, initNav } from "./nav.js";
 import { initOfflineBanner } from "./offlineBanner.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // 1) Offline banner
-  initOfflineBanner();
+    initOfflineBanner();
 
-  // 2) Rendera nav i #app och initiera
-  const app = document.getElementById("app");
-  if (app) {
-    app.insertAdjacentHTML("afterbegin", renderNav());
-    initNav();
-  }
-
-  // 3) Theme toggle (behåll enkel variant)
-  initThemeToggle();
-
-  // 4) SPA sections
-  const featured = document.getElementById("featured");
-  const favorites = document.getElementById("favorites");
-  const detail = document.getElementById("detail");
-
-  function show(section) {
-    if (!featured || !favorites || !detail) return;
-
-    featured.style.display = "none";
-    favorites.style.display = "none";
-    detail.style.display = "none";
-    section.style.display = "block";
-  }
-
-  // 5) Default: visa featured och ladda första gången
-  const featuredMod = await import("./featured.js");
-  await featuredMod.loadFeatured();
-  show(featured);
-
-  // 6) När ett kort vill öppna detail (featured.js dispatchar open-detail)
-  window.addEventListener("open-detail", (e) => {
-    const { type, id } = e.detail || {};
-    import("./detail.js").then((m) => m.renderDetail(type, id));
-    show(detail);
-  });
-
-  // 7) Back från detail
-  const backBtn = document.getElementById("back-btn");
-  if (backBtn) backBtn.onclick = () => show(featured);
-
-  // 8) NAV adapter: dropdown-nav dispatchar nav:viewChange
-  window.addEventListener("nav:viewChange", (e) => {
-    const { action, resource, filter } = e.detail || {};
-
-    // 1) Favourites
-    if (action === "favorites") {
-      import("./favorites.js").then((m) => m.renderFavorites());
-      show(favorites);
-      return;
+    const app = document.getElementById("app");
+    if (app) {
+        app.insertAdjacentHTML("afterbegin", renderNav());
+        initNav();
     }
 
-    // Safety: måste finnas
-    if (!resource) return;
+    initThemeToggle();
 
-    // Uppdatera vilken resurs som visas
-    if (featured) featured.dataset.type = resource;
+    const sections = {
+        featured: document.getElementById("featured"),
+        favorites: document.getElementById("favorites"),
+        detail: document.getElementById("detail")
+    };
 
-    // 2) All
-    if (action === "list") {
-      import("./featured.js").then((m) => m.loadAll(resource));
-      show(featured);
-      return;
+    function showSection(name) {
+        Object.values(sections).forEach(sec => sec.style.display = "none");
+        sections[name].style.display = "block";
     }
 
-    // 3) Dark/Light filter
-    if (action === "filter") {
-      import("./featured.js").then((m) => m.loadFiltered(resource, filter));
-      show(featured);
-      return;
-    }
+    const featuredMod = await import("./featured.js");
+    await featuredMod.loadFeatured();
+    showSection("featured");
 
-    // Default fallback
-    import("./featured.js").then((m) => m.loadFeatured());
-    show(featured);
-  });
+    window.addEventListener("open-detail", (e) => {
+        const { type, id } = e.detail || {};
+        import("./detail.js").then((m) => m.renderDetail(type, id));
+        showSection("detail");
+    });
 
+    const backBtn = document.getElementById("back-btn");
+    if (backBtn) backBtn.onclick = () => showSection("featured");
+
+    window.addEventListener("nav:viewChange", (e) => {
+        const { action, resource, filter } = e.detail || {};
+
+        if (action === "favorites") {
+            import("./favorites.js").then((m) => m.renderFavorites());
+            showSection("favorites");
+            return;
+        }
+
+        if (!resource) return;
+
+        sections.featured.dataset.type = resource;
+
+        if (action === "list") {
+            import("./featured.js").then((m) => m.loadAll(resource));
+            showSection("featured");
+            return;
+        }
+
+        if (action === "filter") {
+            import("./featured.js").then((m) => m.loadFiltered(resource, filter));
+            showSection("featured");
+            return;
+        }
+
+        import("./featured.js").then((m) => m.loadFeatured());
+        showSection("featured");
+    });
 });
 
 function initThemeToggle() {
-  const btn = document.getElementById("theme-toggle");
-  if (!btn) return;
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
 
-  const saved = localStorage.getItem("theme");
-  if (saved === "dark") {
-    document.documentElement.classList.add("dark-theme");
     const icon = btn.querySelector(".theme-toggle__icon");
-    if (icon) icon.textContent = "☀️";
-  }
 
-  btn.onclick = () => {
-    const isDark = document.documentElement.classList.toggle("dark-theme");
-    const icon = btn.querySelector(".theme-toggle__icon");
+    const saved = localStorage.getItem("theme");
+    const isDark = saved === "dark";
+
+    document.documentElement.classList.toggle("dark-theme", isDark);
     if (icon) icon.textContent = isDark ? "☀️" : "🌙";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  };
+
+    btn.onclick = () => {
+        const nowDark = document.documentElement.classList.toggle("dark-theme");
+        if (icon) icon.textContent = nowDark ? "☀️" : "🌙";
+        localStorage.setItem("theme", nowDark ? "dark" : "light");
+    };
 }
 
-// 9) Service Worker (PWA)
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      await navigator.serviceWorker.register("./service-worker.js");
-      console.log("Service Worker registered ✅");
-    } catch (err) {
-      console.error("Service Worker registration failed ❌", err);
-    }
-  });
+    window.addEventListener("load", async () => {
+        try {
+            await navigator.serviceWorker.register("./service-worker.js");
+            console.log("Service Worker registered ✅");
+        } catch (err) {
+            console.error("Service Worker registration failed ❌", err);
+        }
+    });
 }

@@ -1,50 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- PWA -->
     <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#0b0f1a" />
 
     <title>Galactic Dex</title>
-  </head>
+</head>
 
-  <body>
-    <!-- Nav injiceras här av main.js -->
-    <div id="app"></div>
+<body>
+<!-- Navigation injected by main.js -->
+<div id="app"></div>
 
-    <main>
-      <section id="featured" aria-labelledby="featured-title" data-type="people">
+<main>
+    <!-- FEATURED SECTION -->
+    <section id="featured" aria-labelledby="featured-title" data-type="people">
         <h2 id="featured-title">Featured</h2>
 
-        <button class="nav-btn left-btn" type="button">‹</button>
-        <button class="nav-btn right-btn" type="button">›</button>
+        <!-- Scroll buttons -->
+        <button class="nav-btn left-btn" type="button" aria-label="Scroll left">‹</button>
+        <button class="nav-btn right-btn" type="button" aria-label="Scroll right">›</button>
 
         <div class="featured-list"></div>
-      </section>
+    </section>
 
-      <section id="favorites" style="display: none;">
+    <!-- FAVORITES SECTION -->
+    <section id="favorites" style="display: none;">
         <h2>Your Favorites</h2>
         <div id="favorites-container"></div>
-      </section>
+    </section>
 
-      <section id="detail" style="display: none;">
+    <!-- DETAIL SECTION -->
+    <section id="detail" style="display: none;">
         <button id="back-btn" class="back-btn" type="button">← Back</button>
         <div id="detail-container" class="detail-container"></div>
-      </section>
+    </section>
 
-      <div
-        id="offlineBanner"
-        class="offline-banner"
-        role="alert"
-        aria-live="polite"
-        hidden
-      >
-        Du är offline – viss data kanske inte är uppdaterad.
-      </div>
-    </main>
+    <!-- OFFLINE BANNER -->
+    <div
+            id="offlineBanner"
+            class="offline-banner"
+            role="alert"
+            aria-live="polite"
+            hidden
+    >
+        You are offline — some data may be outdated.
+    </div>
+</main>
 
-    <script type="module" src="/src/js/main.js"></script>
-  </body>
+<!-- MAIN JS -->
+<script type="module" src="/src/js/main.js"></script>
+</body>
 </html>
