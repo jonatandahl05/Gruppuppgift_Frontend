@@ -38,7 +38,7 @@ export function renderFavorites() {
                             <h3>${item.name}</h3>
 
                             <div class="card-actions">
-                                <button class="view-btn">View more</button>
+                                <button class="view-btn btn-primary" type="button">View more</button>
                                 <button class="fav-btn">${isFavorite(item.id, item.type) ? "★" : "☆"}</button>
                             </div>
                         </div>
