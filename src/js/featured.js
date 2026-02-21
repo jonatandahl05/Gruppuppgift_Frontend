@@ -145,6 +145,156 @@ export async function loadAll(type) {
     console.error("Error loading all:", err);
     container.innerHTML = '<p class="error">Could not load data.</p>';
   }
+
+}
+
+export async function searchResource(type, query) {
+  const container = document.querySelector(".featured-list");
+  const endpoint = endpoints[type];
+  if (!container || !endpoint) return;
+
+  const q = (query || "").trim();
+  if (!q) {
+    await loadAll(type);
+    return;
+  }
+
+  container.innerHTML = '<p class="loading">Searching...</p>';
+
+  try {
+    // SWAPI stödjer ?search=
+    let nextUrl = `${endpoint}?search=${encodeURIComponent(q)}`;
+    let results = [];
+
+    // Håll det lätt: max 18 kort (samma känsla som loadAll)
+    while (nextUrl && results.length < 18) {
+      const res = await fetch(nextUrl);
+      const data = await res.json();
+      results = results.concat(data.results || []);
+      nextUrl = data.next;
+    }
+
+    container.innerHTML = "";
+
+    for (const item of results) {
+      const id = extractId(item.url);
+      if (!id) continue;
+
+      const name = item.name || item.title || "Unknown";
+      const card = document.createElement("div");
+      card.classList.add("featured-card");
+
+      card.innerHTML = `
+        <img src="${getImage(type, id)}" alt="${name}">
+        <h3>${name}</h3>
+
+        <div class="card-actions">
+          <button class="view-btn" type="button">View more</button>
+          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+        </div>
+      `;
+
+      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
+
+      const favBtn = card.querySelector(".fav-btn");
+      favBtn.onclick = () => {
+        toggleFavorite({ id, type, name });
+        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
+      };
+
+      container.appendChild(card);
+    }
+
+    if (!container.children.length) {
+      container.innerHTML = '<p class="no-results">No results for your search.</p>';
+    }
+  } catch (err) {
+    console.error("Error searching:", err);
+    container.innerHTML = '<p class="error">Could not search data.</p>';
+  }
+}
+
+export async function searchAll(query) {
+  const container = document.querySelector(".featured-list");
+  if (!container) return;
+
+  const q = (query || "").trim();
+  if (!q) {
+    await loadFeatured();
+    return;
+  }
+
+  container.innerHTML = '<p class="loading">Searching across all...</p>';
+
+  const types = ["people", "planets", "starships", "films"];
+
+  try {
+    // Kör parallellt – snabbare än att vänta typ för typ
+    const responses = await Promise.all(
+      types.map(async (type) => {
+        const endpoint = endpoints[type];
+        const url = `${endpoint}?search=${encodeURIComponent(q)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const results = (data.results || []).slice(0, 8); // håll det lätt
+        return { type, results };
+      })
+    );
+
+    // Flatta och tagga items med typ
+    const all = responses.flatMap(({ type, results }) =>
+      results.map((item) => ({ type, item }))
+    );
+
+    container.innerHTML = "";
+
+    // Inga träffar
+    if (!all.length) {
+      container.innerHTML = '<p class="no-results">No results across all resources.</p>';
+      return;
+    }
+
+    // Rendera blandat – med liten typ-badge
+    for (const { type, item } of all) {
+      const id = extractId(item.url);
+      if (!id) continue;
+
+      const name = item.name || item.title || "Unknown";
+      const card = document.createElement("div");
+      card.classList.add("featured-card");
+
+      const typeLabel =
+        type === "people" ? "Character" :
+        type === "planets" ? "Planet" :
+        type === "starships" ? "Starship" :
+        type === "films" ? "Film" :
+        type;
+
+      card.innerHTML = `
+        <div class="card-badge" aria-label="Type">${typeLabel}</div>
+        <img src="${getImage(type, id)}" alt="${name}">
+        <h3>${name}</h3>
+
+        <div class="card-actions">
+          <button class="view-btn" type="button">View more</button>
+          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+        </div>
+      `;
+
+      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
+
+      const favBtn = card.querySelector(".fav-btn");
+      favBtn.onclick = () => {
+        toggleFavorite({ id, type, name });
+        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
+      };
+
+      container.appendChild(card);
+    }
+  } catch (err) {
+    console.error("Error searching across all:", err);
+    container.innerHTML = '<p class="error">Could not search across all data.</p>';
+  }
 }
 
 export async function loadFiltered(type, filter) {
