@@ -6,6 +6,13 @@ describe("getFavorites", () => {
     it("returns empty array when localStorage is empty", () => {
         expect(getFavorites()).toEqual([]);
     });
+
+    it("returns parsed favorites from localStorage", () => {
+        const favs = [{ id: "1", type: "people", name: "Luke" }];
+        localStorage.setItem("favorites", JSON.stringify(favs));
+
+        expect(getFavorites()).toEqual(favs);
+    });
 });
 
 describe("toggleFavorite", () => {
