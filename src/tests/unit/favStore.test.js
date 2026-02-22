@@ -23,3 +23,9 @@ describe("isFavorite", () => {
         expect(isFavorite("1", "people")).toBe(false);
     });
 });
+
+describe("normalizeType", () => {
+    it("converts to lowercase", () => {
+        expect(normalizeType("People")).toBe("people");
+    });
+});
