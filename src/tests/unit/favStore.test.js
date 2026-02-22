@@ -28,4 +28,12 @@ describe("normalizeType", () => {
     it("converts to lowercase", () => {
         expect(normalizeType("People")).toBe("people");
     });
+
+    it("trims whitespace", () => {
+        expect(normalizeType("  planets  ")).toBe("planets");
+    });
+
+    it("handles already normalized input", () => {
+        expect(normalizeType("starships")).toBe("starships");
+    });
 });
