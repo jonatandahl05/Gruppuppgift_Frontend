@@ -17,3 +17,9 @@ describe("toggleFavorite", () => {
         expect(favs[0].name).toBe("Luke");
     });
 });
+
+describe("isFavorite", () => {
+    it("returns false when no favorites exist", () => {
+        expect(isFavorite("1", "people")).toBe(false);
+    });
+});
