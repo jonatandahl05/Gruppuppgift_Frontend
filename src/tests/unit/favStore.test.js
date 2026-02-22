@@ -2,6 +2,12 @@
 
 import { normalizeType, getFavorites, isFavorite, toggleFavorite } from "../../js/favStore.js";
 
+describe("getFavorites", () => {
+    it("returns empty array when localStorage is empty", () => {
+        expect(getFavorites()).toEqual([]);
+    });
+});
+
 describe("toggleFavorite", () => {
     it("adds a favorite when it does not exist", () => {
         toggleFavorite({ id: "1", type: "people", name: "Luke" });
