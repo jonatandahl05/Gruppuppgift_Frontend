@@ -36,52 +36,108 @@ export async function loadFeatured() {
   const container = document.querySelector(".featured-list");
   if (!section || !container) return;
 
-  container.innerHTML = "";
+  // “token” för att undvika race conditions när man byter kategori snabbt
+  const token = String(Date.now());
+  section.dataset.loadToken = token;
 
   const type = normalizeType(section.dataset.type);
   const ids = popular[type];
   const endpoint = endpoints[type];
   if (!ids || !endpoint) return;
 
-  for (const idNum of ids) {
-    const id = String(idNum);
-    const res = await fetch(`${endpoint}${idNum}/`);
-    const data = await res.json();
+  // Reset UI direkt
+  container.innerHTML = "";
 
-    const item = { id, type, name: data.name || data.title };
-
-    const card = document.createElement("div");
-    card.classList.add("featured-card");
-
-    card.innerHTML = `
-      <img src="${getImage(type, id)}" alt="${item.name}">
-      <h3>${item.name}</h3>
-
-      <div class="card-actions">
-        <button class="view-btn" type="button">View more</button>
-        <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-      </div>
+  // (Valfritt) visa enkla placeholders så att UI känns instant
+  for (let i = 0; i < ids.length; i++) {
+    const skel = document.createElement("div");
+    skel.className = "featured-card featured-card--skeleton";
+    skel.innerHTML = `
+      <div class="skeleton-img"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-actions"></div>
     `;
-
-    card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-    const favBtn = card.querySelector(".fav-btn");
-    favBtn.onclick = () => {
-      toggleFavorite(item);
-      favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-    };
-
-    container.appendChild(card);
+    container.appendChild(skel);
   }
 
-  const list = document.querySelector(".featured-list");
+  // Hämta ALLA parallellt
+  const tasks = ids.map(async (idNum, index) => {
+    const id = String(idNum);
+
+    try {
+      const res = await fetch(`${endpoint}${idNum}/`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      // Om användaren bytte view under tiden: avbryt render
+      if (section.dataset.loadToken !== token) return;
+
+      const name = data.name || data.title || "Unknown";
+      const item = { id, type, name };
+
+      const card = document.createElement("div");
+      card.classList.add("featured-card");
+
+      card.innerHTML = `
+        <img src="${getImage(type, id)}" alt="${name}">
+        <h3>${name}</h3>
+
+        <div class="card-actions">
+          <button class="view-btn" type="button">View more</button>
+          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+        </div>
+      `;
+
+      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
+
+      const favBtn = card.querySelector(".fav-btn");
+      favBtn.onclick = () => {
+        toggleFavorite(item);
+        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
+      };
+
+      // Ersätt placeholder på samma index (så ordningen blir stabil)
+      const placeholder = container.children[index];
+      if (placeholder) {
+        container.replaceChild(card, placeholder);
+      } else {
+        container.appendChild(card);
+      }
+    } catch (err) {
+      console.error("Featured fetch error:", err);
+
+      // Om användaren bytte view under tiden: avbryt
+      if (section.dataset.loadToken !== token) return;
+
+      // Ersätt placeholder med ett felkort istället för att lämna tomt
+      const errorCard = document.createElement("div");
+      errorCard.className = "featured-card featured-card--error";
+      errorCard.innerHTML = `
+        <h3>Could not load</h3>
+        <p class="error">Try again later.</p>
+      `;
+
+      const placeholder = container.children[index];
+      if (placeholder) {
+        container.replaceChild(errorCard, placeholder);
+      } else {
+        container.appendChild(errorCard);
+      }
+    }
+  });
+
+  // Vi väntar inte på att allt måste bli klart för att rendera,
+  // men vi kan låta funktionen returnera när alla tasks är “done”.
+  await Promise.allSettled(tasks);
+
+  // Scroll-knappar (behåll er gamla logik)
   const left = document.querySelector(".left-btn");
   const right = document.querySelector(".right-btn");
 
-  if (list && left && right) {
+  if (left && right) {
     const cardWidth = 180 + 16;
-    left.onclick = () => list.scrollBy({ left: -cardWidth, behavior: "smooth" });
-    right.onclick = () => list.scrollBy({ left: cardWidth, behavior: "smooth" });
+    left.onclick = () => container.scrollBy({ left: -cardWidth, behavior: "smooth" });
+    right.onclick = () => container.scrollBy({ left: cardWidth, behavior: "smooth" });
   }
 }
 
