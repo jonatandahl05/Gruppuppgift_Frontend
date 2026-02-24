@@ -75,11 +75,8 @@ export async function loadFeatured() {
       const name = data.name || data.title || "Unknown";
       const item = { id, type, name };
 
-      <div class="card-actions">
-        <button class="view-btn btn-primary" type="button">View more</button>
-        <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-      </div>
-    ;
+      const card = document.createElement("div");
+      card.classList.add("featured-card");
 
       card.innerHTML = `
         <img src="${getImage(type, id)}" alt="${name}">
