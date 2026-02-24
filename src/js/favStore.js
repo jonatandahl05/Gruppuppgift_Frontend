@@ -1,14 +1,9 @@
-// favStore.js
 export function normalizeType(type) {
-    return (type || "").trim().toLowerCase();
+    return type.trim().toLowerCase();
 }
 
 export function getFavorites() {
-    try {
-        return JSON.parse(localStorage.getItem("favorites")) || [];
-    } catch {
-        return [];
-    }
+    return JSON.parse(localStorage.getItem("favorites")) || [];
 }
 
 export function isFavorite(id, type) {
@@ -20,16 +15,15 @@ export function isFavorite(id, type) {
 export function toggleFavorite(item) {
     let favorites = getFavorites();
 
-    const id = String(item.id);
-    const type = normalizeType(item.type);
-    const name = item.name || "Unknown";
+    item.id = String(item.id);
+    item.type = normalizeType(item.type);
 
-    const exists = favorites.some(f => f.id === id && f.type === type);
+    const exists = favorites.some(f => f.id === item.id && f.type === item.type);
 
     if (exists) {
-        favorites = favorites.filter(f => !(f.id === id && f.type === type));
+        favorites = favorites.filter(f => !(f.id === item.id && f.type === item.type));
     } else {
-        favorites.push({ id, type, name });
+        favorites.push(item);
     }
 
     localStorage.setItem("favorites", JSON.stringify(favorites));
