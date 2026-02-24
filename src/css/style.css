@@ -163,23 +163,26 @@ button:hover {
 .theme-toggle {
   margin-left: auto;
   border: 1px solid var(--color-border);
-  background: transparent;
-  color: var(--color-text);
+  background-color: var(--color-surface); /* Använd ytfärgen */
+  color: var(--color-text); /* Använd textfärgen */
   box-shadow: none;
   text-shadow: none;
   padding: 8px 10px;
-  border-radius: 10px;
+  border-radius: var(--radius); /* Använd den globala radien */
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
 }
 
 .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background-color: var(--color-accent-hover); /* Använd accentfärgen vid hover */
+  color: var(--color-bg); /* Gör texten kontrasterande */
   transform: translateY(-1px);
-  box-shadow: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Lägg till en subtil skugga vid hover */
 }
 
 .theme-toggle__icon {
   font-size: 18px;
   line-height: 1;
+  color: inherit; /* Ärva färgen från föräldern */
 }
 
 /* =====================================================
@@ -806,36 +809,4 @@ html.dark-theme .offline-banner {
     scroll-snap-align: center !important;
 }
 
-
-body.dark-mode {
-  background-color: #121212; 
-  color: #ffffff; 
-}
-
-body.dark-mode a {
-  color: #bb86fc; 
-}
-
-body.dark-mode button {
-  background-color: #333333; 
-  color: #ffffff; 
-  border: 1px solid #444444; 
-}
-
-body.dark-mode input {
-  background-color: #222222; 
-  color: #ffffff; 
-  border: 1px solid #444444; 
-}
-
-
-body.dark-mode .header {
-  background-color: #1e1e1e; 
-}
-
-body.dark-mode .featured-card {
-  background-color: #2a2a2a; 
-  color: #ffffff; 
-  border: 1px solid #444444; 
-}
 

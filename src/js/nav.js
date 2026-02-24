@@ -20,10 +20,10 @@ export function renderNav() {
         </form>
 
 
-        <button id="toggle-dark-mode" class="dark-mode-toggle" 
-                aria-label="Växla mörkt läge">
-          Dark Mode
-        </button>
+<button id="theme-toggle" class="dark-mode-toggle" 
+        aria-label="Växla mörkt läge">
+  <span class="theme-toggle__icon">🌙</span>
+</button>
 
         <button class="nav-toggle" 
                 aria-label="Öppna meny"
