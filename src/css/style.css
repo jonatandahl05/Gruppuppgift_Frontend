@@ -805,3 +805,37 @@ html.dark-theme .offline-banner {
     flex-shrink: 0 !important;
     scroll-snap-align: center !important;
 }
+
+
+body.dark-mode {
+  background-color: #121212; 
+  color: #ffffff; 
+}
+
+body.dark-mode a {
+  color: #bb86fc; 
+}
+
+body.dark-mode button {
+  background-color: #333333; 
+  color: #ffffff; 
+  border: 1px solid #444444; 
+}
+
+body.dark-mode input {
+  background-color: #222222; 
+  color: #ffffff; 
+  border: 1px solid #444444; 
+}
+
+
+body.dark-mode .header {
+  background-color: #1e1e1e; 
+}
+
+body.dark-mode .featured-card {
+  background-color: #2a2a2a; 
+  color: #ffffff; 
+  border: 1px solid #444444; 
+}
+
