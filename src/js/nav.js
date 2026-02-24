@@ -6,6 +6,19 @@ export function renderNav() {
       <nav class="container nav">
         <a href="./index.html" class="logo">SW</a>
 
+        <form class="nav-search" role="search" aria-label="Sök" autocomplete="off">
+          <label class="sr-only" for="nav-search-input">Sök sida</label>
+          <input
+            id="nav-search-input"
+            class="nav-search-input"
+            type="search"
+            name="q"
+            placeholder="Sök..."
+            aria-describedby="nav-search-hint"
+          />
+          <span id="nav-search-hint" class="sr-only">Skriv för att söka och filtrera.</span>
+        </form>
+
         <button class="nav-toggle" 
                 aria-label="Öppna meny"
                 aria-expanded="false">
@@ -42,6 +55,7 @@ export function renderNav() {
 export function initNav() {
   const navToggle = document.querySelector('.nav-toggle');
   const navLinks = document.querySelector('.nav-links');
+  const searchInput = document.getElementById('nav-search-input');
 
     if (!navToggle || !navLinks) return;
 
@@ -88,6 +102,25 @@ export function initNav() {
             closeMobileMenu();
         });
     });
+
+    // Searchbar: dispatcha ett event som main.js kan lyssna på
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = (e.target.value || '').trim();
+
+        window.dispatchEvent(
+          new CustomEvent('nav:search', {
+            detail: { query }
+          })
+        );
+      });
+
+      // Enter ska inte råka navigera/refresh om någon browser försöker submit:a formuläret
+      const searchForm = searchInput.closest('form');
+      if (searchForm) {
+        searchForm.addEventListener('submit', (e) => e.preventDefault());
+      }
+    }
 
     if (window.innerWidth >= 768) {
       initDesktopDropdown();

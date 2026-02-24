@@ -87,6 +87,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     show(featured);
   });
 
+  // 9) Search (nav.js dispatchar nav:search)
+  // Global sök: söker över people/planets/starships/films oavsett aktiv flik
+  // - Tom sökning -> tillbaka till "Featured"
+  // - Text -> featured.js::searchAll(query)
+  let searchTimer;
+  window.addEventListener("nav:search", (e) => {
+    const query = (e.detail?.query || "").trim();
+
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(async () => {
+      // Visa alltid featured när man söker
+      show(featured);
+
+      const m = await import("./featured.js");
+
+      // Tom query => tillbaka till default/featured
+      if (!query) {
+        if (typeof m.loadFeatured === "function") {
+          await m.loadFeatured();
+        }
+        return;
+      }
+
+      // Global sök (ny)
+      if (typeof m.searchAll === "function") {
+        await m.searchAll(query);
+        return;
+      }
+
+      // Fallback (om någon råkat ta bort searchAll)
+      console.log("nav:search (main.js) → featured.js saknar searchAll:", { query });
+    }, 180);
+  });
 });
 
 function initThemeToggle() {
