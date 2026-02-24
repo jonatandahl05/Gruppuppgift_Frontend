@@ -75,8 +75,11 @@ export async function loadFeatured() {
       const name = data.name || data.title || "Unknown";
       const item = { id, type, name };
 
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
+      <div class="card-actions">
+        <button class="view-btn btn-primary" type="button">View more</button>
+        <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+      </div>
+    `;
 
       card.innerHTML = `
         <img src="${getImage(type, id)}" alt="${name}">
@@ -182,7 +185,7 @@ export async function loadAll(type) {
         <h3>${name}</h3>
 
         <div class="card-actions">
-          <button class="view-btn" type="button">View more</button>
+          <button class="view-btn btn-primary" type="button">View more</button>
           <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
         </div>
       `;
@@ -250,7 +253,7 @@ export async function loadFiltered(type, filter) {
         <h3>${name}</h3>
 
         <div class="card-actions">
-          <button class="view-btn" type="button">View more</button>
+          <button class="view-btn btn-primary" type="button">View more</button>
           <button class="fav-btn" type="button">${isFavorite(id, "people") ? "★" : "☆"}</button>
         </div>
       `;
