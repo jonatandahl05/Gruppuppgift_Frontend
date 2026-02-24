@@ -7,7 +7,8 @@ export const menuData = [
             { label: "All", action: "list", resource: "people" },
             { label: "Favourites", action: "favorites", resource: "people" },
             { label: "Dark Side", action: "filter", resource: "people", filter: "dark" },
-            { label: "Light Side", action: "filter", resource: "people", filter: "light" }
+            { label: "Light Side", action: "filter", resource: "people", filter: "light" },
+            { label: "Droids", action: "filter", resource: "people", filter: "droids" }
         ]
     },
     {

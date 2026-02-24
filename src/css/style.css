@@ -18,6 +18,19 @@ body {
   overflow-x: hidden;
 }
 
+/*Root för sort knappen*/
+:root {
+  --card-bg: #ffffff;
+  --text-color: #000000;
+  --border-color: #cccccc;
+}
+
+body.dark-mode {
+  --card-bg: #1c1f26;
+  --text-color: #ffffff;
+  --border-color: #333333;
+}
+
 /*Root för dark theme*/
 
 :root {
