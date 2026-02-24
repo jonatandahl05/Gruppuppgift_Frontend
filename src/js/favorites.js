@@ -27,19 +27,25 @@ export function renderFavorites() {
     container.innerHTML = Object.entries(groups)
         .filter(([_, items]) => items.length > 0)
         .map(([type, items]) => `
-      <h2 class="fav-title">${type}</h2>
+            <h2 style="margin-top:1.5rem; text-transform:capitalize;">${type}</h2>
 
-      <div class="favorites-wrapper">
-        <div class="favorites-list">
-          ${items.map(item => `
-            <div class="featured-card" data-id="${item.id}" data-type="${item.type}">
-              <img src="${getImage(item.type, item.id)}" alt="${item.name}">
-              <h3>${item.name}</h3>
+            <div class="favorites-wrapper">
+                <div class="favorites-list">
+                    ${items.map(item => `
+                        <div class="featured-card" 
+                             data-id="${item.id}" 
+                             data-type="${item.type}">
+                             
+                            <img src="${getImage(item.type, item.id)}">
+                            <h3>${item.name}</h3>
 
-              <div class="card-actions">
-                <button class="view-btn">View more</button>
-                <button class="fav-btn">${isFavorite(item.id, item.type) ? "★" : "☆"}</button>
-              </div>
+                            <div class="card-actions">
+                                <button class="view-btn btn-primary" type="button">View more</button>
+                                <button class="fav-btn">${isFavorite(item.id, item.type) ? "★" : "☆"}</button>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
             </div>
           `).join("")}
         </div>
