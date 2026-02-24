@@ -1,50 +1,85 @@
-<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="manifest" href="./manifest.json" />
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#0b0f1a" />
 
     <title>Galactic Dex</title>
-  </head>
+</head>
 
-  <body>
-    <!-- Nav injiceras här av main.js -->
-    <div id="app"></div>
+<body>
+<!-- Navigation injected by main.js -->
+<div id="app"></div>
 
-    <main>
-      <section id="featured" aria-labelledby="featured-title" data-type="people">
-        <h2 id="featured-title">Featured</h2>
+<main>
 
-        <button class="nav-btn left-btn" type="button">‹</button>
-        <button class="nav-btn right-btn" type="button">›</button>
+    <!-- ⭐ HOME SECTION (Featured) -->
+    <section id="home">
+        <h2>Featured Characters</h2>
+        <div class="featured-list" data-type="people"></div>
 
+        <h2>Featured Planets</h2>
+        <div class="featured-list" data-type="planets"></div>
+
+        <h2>Featured Starships</h2>
+        <div class="featured-list" data-type="starships"></div>
+
+        <h2>Featured Movies</h2>
+        <div class="featured-list" data-type="films"></div>
+        <div class="featured-section">
+            <h2>Vehicles</h2>
+            <div class="featured-list" data-type="vehicles">
+            </div>
+        </div>
+        <div class="featured-section">
+            <h2>Species</h2>
+            <div class="featured-list" data-type="species">
+            </div>
+        </div>
+        <button class="scroll-btn left-btn">‹</button>
+        <button class="scroll-btn right-btn">›</button>
+
+    </section>
+
+    <!-- ⭐ ALL ITEMS SECTION -->
+    <section id="featured" style="display: none;">
+        <h2 id="featured-title">All Items</h2>
+
+        <!-- ❗ ENDA featured-list (den viktiga) -->
         <div class="featured-list"></div>
-      </section>
 
-      <section id="favorites" style="display: none;">
+
+    </section>
+
+    <!-- ⭐ FAVORITES SECTION -->
+    <section id="favorites" style="display: none;">
         <h2>Your Favorites</h2>
         <div id="favorites-container"></div>
-      </section>
+    </section>
 
-      <section id="detail" style="display: none;">
+    <!-- ⭐ DETAIL SECTION -->
+    <section id="detail" style="display: none;">
         <button id="back-btn" class="back-btn" type="button">← Back</button>
         <div id="detail-container" class="detail-container"></div>
-      </section>
+    </section>
 
-      <div
-        id="offlineBanner"
-        class="offline-banner"
-        role="alert"
-        aria-live="polite"
-        hidden
-      >
-        Du är offline – viss data kanske inte är uppdaterad.
-      </div>
-    </main>
+    <!-- ⭐ OFFLINE BANNER -->
+    <div
+            id="offlineBanner"
+            class="offline-banner"
+            role="alert"
+            aria-live="polite"
+            hidden
+    >
+        You are offline — some data may be outdated.
+    </div>
 
-    <script type="module" src="/src/js/main.js"></script>
-  </body>
+</main>
+
+<!-- MAIN JS -->
+<script type="module" src="/src/js/main.js"></script>
+</body>
 </html>

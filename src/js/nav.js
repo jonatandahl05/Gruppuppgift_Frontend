@@ -6,47 +6,41 @@ export function renderNav() {
       <nav class="container nav">
         <a href="./index.html" class="logo">SW</a>
 
-        <button class="nav-toggle" 
-                aria-label="Öppna meny"
-                aria-expanded="false">
+        
+
+        <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
           <span class="hamburger"></span>
         </button>
 
         <ul class="nav-links">
-          ${menuData.map(cat => `
+          ${menuData.map(item => `
             <li class="nav-item">
-              <button class="nav-main" data-key="${cat.key}">
-                ${cat.label}
+              <button class="nav-btn"
+                data-action="${item.action}"
+                data-resource="${item.resource || ""}"
+                data-filter="${item.filter || ""}">
+                ${item.label}
               </button>
-              <ul class="sub-menu" data-parent="${cat.key}">
-                ${cat.subItems.map(sub => `
-                  <li>
-                    <button
-                      class="sub-item"
-                      data-action="${sub.action}"
-                      data-resource="${sub.resource || ""}"
-                      data-filter="${sub.filter || ""}">
-                      ${sub.label}
-                    </button>
-                  </li>
-                `).join("")}
-              </ul>
             </li>
           `).join("")}
         </ul>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-toggle__icon">🌙</span>
+        </button>
       </nav>
     </header>
   `;
 }
 
+
 export function initNav() {
-  const navToggle = document.querySelector('.nav-toggle');
-  const navLinks = document.querySelector('.nav-links');
+    const navToggle = document.querySelector(".nav-toggle");
+    const navLinks = document.querySelector(".nav-links");
 
     if (!navToggle || !navLinks) return;
 
-    const overlay = document.createElement('div');
-    overlay.classList.add('nav-overlay');
+    const overlay = document.createElement("div");
+    overlay.classList.add("nav-overlay");
     document.body.appendChild(overlay);
 
     function closeMobileMenu() {
@@ -56,14 +50,12 @@ export function initNav() {
         document.body.style.overflow = "";
     }
 
-    // Toggle-funktion (lokal, inte exporterad)
     function toggleMenu() {
         const isOpen = navToggle.classList.toggle("active");
-        navLinks.classList.toggle('active');
-        overlay.classList.toggle('active');
-
-        navToggle.setAttribute('aria-expanded', isOpen);
-        document.body.style.overflow = isOpen ? 'hidden' : '';
+        navLinks.classList.toggle("active");
+        overlay.classList.toggle("active");
+        navToggle.setAttribute("aria-expanded", isOpen);
+        document.body.style.overflow = isOpen ? "hidden" : "";
     }
 
     navToggle.addEventListener("click", toggleMenu);
@@ -73,7 +65,7 @@ export function initNav() {
         if (e.key === "Escape") closeMobileMenu();
     });
 
-    document.querySelectorAll(".sub-item").forEach(btn => {
+    document.querySelectorAll(".nav-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             const action = btn.dataset.action;
             const resource = btn.dataset.resource;
@@ -88,50 +80,18 @@ export function initNav() {
             closeMobileMenu();
         });
     });
+}
+const navList = document.querySelector(".nav-links");
+const leftBtn = document.querySelector(".left-btn");
+const rightBtn = document.querySelector(".right-btn");
 
-    if (window.innerWidth >= 768) {
-      initDesktopDropdown();
-    } 
-    else {
-      initMobileMenu();
-    }
+if (leftBtn && rightBtn && navList) {
+    leftBtn.addEventListener("click", () => {
+        navList.scrollBy({ left: -200, behavior: "smooth" });
+    });
 
-  };
-
-//    navLinks.querySelectorAll('a').forEach(link => {
-//        link.addEventListener('click', () => {
-//            if (navLinks.classList.contains('active')) {
-//                toggleMenu();
-//            }
-//        });
-//    });
-
-function initDesktopDropdown() {
-    document.querySelectorAll(".nav-item").forEach(item => {
-        const mainBtn = item.querySelector(".nav-main");
-        const subMenu = item.querySelector(".sub-menu");
-
-        mainBtn.addEventListener("mouseenter", () => { 
-            subMenu.classList.add("open");
-        });
-
-        item.addEventListener("mouseleave", () => { // <-- Detta är okej men det kan skapa flickrande, det kanske är bättre att sätta "mouseenter" på item istället för mainBtn
-            subMenu.classList.remove("open");
-        });
+    rightBtn.addEventListener("click", () => {
+        navList.scrollBy({ left: 200, behavior: "smooth" });
     });
 }
 
-function initMobileMenu() {
-    document.querySelectorAll(".nav-main").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const key = btn.dataset.key;
-
-            document.querySelectorAll(".sub-menu").forEach(menu => {
-                menu.classList.toggle(
-                    "active",
-                    menu.dataset.parent === key
-                );
-            });
-        });
-    });
-}

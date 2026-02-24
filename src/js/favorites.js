@@ -14,7 +14,9 @@ export function renderFavorites() {
         people: [],
         planets: [],
         starships: [],
-        films: []
+        films: [],
+        vehicles: [],
+        species: []
     };
 
     favorites.forEach(f => {
@@ -45,7 +47,10 @@ export function renderFavorites() {
                     `).join("")}
                 </div>
             </div>
-        `).join("");
+          `).join("")}
+        </div>
+      </div>
+    `).join("");
 
     container.querySelectorAll(".featured-card").forEach(card => {
         const id = String(card.dataset.id);
@@ -54,12 +59,9 @@ export function renderFavorites() {
 
         const item = { id, type, name };
 
-        const viewBtn = card.querySelector(".view-btn");
-        const favBtn = card.querySelector(".fav-btn");
+        card.querySelector(".view-btn").onclick = () => openDetail(type, id);
 
-        viewBtn.onclick = () => openDetail(type, id);
-
-        favBtn.onclick = () => {
+        card.querySelector(".fav-btn").onclick = () => {
             toggleFavorite(item);
             renderFavorites();
         };
