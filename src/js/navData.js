@@ -9,8 +9,8 @@ export const menuData = [
 
     { key: "films", label: "Movies", action: "list", resource: "films" },
     { key: "skywalker", label: "Skywalker Saga", action: "filter", resource: "films", filter: "skywalker" },
-    { key: "standalone", label: "Standalone Films", action: "filter", resource: "films", filter: "standalone" },
-    { key: "series", label: "Series", action: "filter", resource: "films", filter: "series" },
+    { key: "vehicles", label: "Vehicles", action: "list", resource: "vehicles" },
+    { key: "species", label: "Species", action: "list", resource: "species" },
 
     { key: "favorites", label: "Favorites", action: "favorites", resource: "" }
 ];

@@ -14,7 +14,9 @@ export function renderFavorites() {
         people: [],
         planets: [],
         starships: [],
-        films: []
+        films: [],
+        vehicles: [],
+        species: []
     };
 
     favorites.forEach(f => {

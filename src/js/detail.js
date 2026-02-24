@@ -5,7 +5,9 @@ const endpoints = {
     people: "https://swapi.py4e.com/api/people/",
     planets: "https://swapi.py4e.com/api/planets/",
     starships: "https://swapi.py4e.com/api/starships/",
-    films: "https://swapi.py4e.com/api/films/"
+    films: "https://swapi.py4e.com/api/films/",
+    vehicles: "https://swapi.py4e.com/api/vehicles/",
+    species: "https://swapi.py4e.com/api/species/"
 };
 
 export async function renderDetail(type, id) {

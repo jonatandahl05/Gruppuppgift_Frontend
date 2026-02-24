@@ -386,3 +386,136 @@ body {
     color: #ccc;
     text-align: center;
 }
+
+/* ===========================
+   DESKTOP: GRID LAYOUT FOR LOAD ALL
+=========================== */
+
+@media (min-width: 769px) {
+    .featured-list {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+        overflow-x: visible !important; /* ingen scroll */
+        white-space: normal !important;
+        padding-bottom: 2rem;
+    }
+
+    .featured-card {
+        width: 100% !important;
+        flex-shrink: 1 !important;
+    }
+}
+/* ===========================
+   MOBILE: HORIZONTAL SCROLL
+=========================== */
+
+@media (max-width: 768px) {
+    .featured-list {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        gap: 1rem;
+        scroll-behavior: smooth;
+    }
+
+    .featured-card {
+        width: 180px !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/* ===========================
+   MOBILE: ALL ITEMS — 8 CARDS PER SCROLL BLOCK
+   (utan att ändra index.html)
+=========================== */
+@media (max-width: 768px) {
+
+    /* Endast ALL ITEMS i featured-sektionen */
+    #featured .featured-list {
+        display: grid !important;
+        grid-auto-flow: column;
+        grid-auto-columns: 50%;        /* 2 kort per kolumn */
+        grid-template-rows: repeat(4, auto); /* 4 rader = 8 kort totalt */
+        gap: 1rem;
+
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        scroll-behavior: smooth;
+        padding-bottom: 1rem;
+    }
+
+    #featured .featured-list .featured-card {
+        width: 100% !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/* Apply same behavior to favorites and home sections */
+@media (min-width: 769px) {
+    .favorites-list,
+    .home-section .featured-list {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+        overflow-x: visible !important;
+        white-space: normal !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .favorites-list,
+    .home-section .featured-list {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        gap: 1rem;
+        flex-direction: row;
+    }
+}
+
+
+
+/* BACK BUTTON – NEON STYLE */
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+
+    background: rgba(0, 140, 255, 0.12);
+    border: 1px solid #8ac7ff;
+    color: #0a0a0a;
+
+    border-radius: 999px;
+    cursor: pointer;
+    transition: 0.25s ease;
+    text-shadow: 0 0 6px rgba(0, 140, 255, 0.4);
+    box-shadow: 0 0 10px rgba(0, 140, 255, 0.18);
+}
+
+.back-btn:hover {
+    background: rgba(0, 140, 255, 0.25);
+    box-shadow: 0 0 16px rgba(0, 140, 255, 0.45);
+    transform: translateX(-3px);
+}
+
+/* DARK MODE VARIANT */
+.dark-theme .back-btn {
+    background: rgba(0, 255, 255, 0.08);
+    border: 1px solid #00eaff;
+    color: #e8f7ff;
+    text-shadow: 0 0 8px #00eaff;
+    box-shadow: 0 0 14px rgba(0, 255, 255, 0.3);
+}
+
+.dark-theme .back-btn:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    transform: translateX(-3px);
+}

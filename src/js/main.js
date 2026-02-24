@@ -2,9 +2,11 @@ import "../css/style.css";
 import { renderNav, initNav } from "./nav.js";
 import { initOfflineBanner } from "./offlineBanner.js";
 
+
 document.addEventListener("DOMContentLoaded", async () => {
     initOfflineBanner();
 
+    // Inject navigation
     const app = document.getElementById("app");
     if (app) {
         app.insertAdjacentHTML("afterbegin", renderNav());
@@ -13,7 +15,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     initThemeToggle();
 
+    // Sections
     const sections = {
+        home: document.getElementById("home"),
         featured: document.getElementById("featured"),
         favorites: document.getElementById("favorites"),
         detail: document.getElementById("detail")
@@ -24,49 +28,50 @@ document.addEventListener("DOMContentLoaded", async () => {
         sections[name].style.display = "block";
     }
 
+    // ⭐ STARTSIDA
     const featuredMod = await import("./featured.js");
-    await featuredMod.loadFeatured();
-    showSection("featured");
+    await featuredMod.loadHome();
+    showSection("home");
 
+    // ⭐ DETAIL VIEW
     window.addEventListener("open-detail", (e) => {
         const { type, id } = e.detail || {};
         import("./detail.js").then((m) => m.renderDetail(type, id));
         showSection("detail");
     });
 
+    // ⭐ BACK BUTTON
     const backBtn = document.getElementById("back-btn");
-    if (backBtn) backBtn.onclick = () => showSection("featured");
+    if (backBtn) backBtn.onclick = () => showSection("home");
 
+    // ⭐ NAVIGATION (LIST, FILTER, FAVORITES)
     window.addEventListener("nav:viewChange", (e) => {
         const { action, resource, filter } = e.detail || {};
 
+        // ⭐ FAVORITES
         if (action === "favorites") {
             import("./favorites.js").then((m) => m.renderFavorites());
             showSection("favorites");
             return;
         }
 
-        if (!resource) return;
-
-        sections.featured.dataset.type = resource;
-
-        if (action === "list") {
-            import("./featured.js").then((m) => m.loadAll(resource));
-            showSection("featured");
-            return;
-        }
-
-        if (action === "filter") {
+        // ⭐ FILTER (Light Side, Dark Side, Skywalker, Standalone, Series)
+        if (action === "filter" && resource && filter) {
             import("./featured.js").then((m) => m.loadFiltered(resource, filter));
             showSection("featured");
             return;
         }
 
-        import("./featured.js").then((m) => m.loadFeatured());
-        showSection("featured");
+        // ⭐ LIST (Characters, Planets, Starships, Movies)
+        if (action === "list" && resource) {
+            import("./featured.js").then((m) => m.loadAll(resource));
+            showSection("featured");
+            return;
+        }
     });
 });
 
+// ⭐ THEME TOGGLE
 function initThemeToggle() {
     const btn = document.getElementById("theme-toggle");
     if (!btn) return;
@@ -86,6 +91,7 @@ function initThemeToggle() {
     };
 }
 
+// ⭐ SERVICE WORKER
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
         try {

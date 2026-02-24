@@ -9,94 +9,68 @@ export function getImage(type, id) {
         planets: `${base}/planets/${id}.jpg`,
         starships: `${base}/starships/${id}.jpg`,
         films: `${base}/films/${id}.jpg`,
+        vehicles: `${base}/vehicles/${id}.jpg`,
+        species: `${base}/species/${id}.jpg`,
+
     }[type];
 }
 
+// POPULAR ITEMS FOR HOME PAGE
 const popular = {
     people: [1, 4, 5, 10, 11],
     planets: [1, 2, 3, 4, 5],
     starships: [9, 10, 11],
     films: [1, 2, 3],
+    vehicles: [4, 6, 7],
+    species: [1, 2, 3]
 };
 
+// API ENDPOINTS
 const endpoints = {
     people: "https://swapi.py4e.com/api/people/",
     planets: "https://swapi.py4e.com/api/planets/",
     starships: "https://swapi.py4e.com/api/starships/",
     films: "https://swapi.py4e.com/api/films/",
+    vehicles: "https://swapi.py4e.com/api/vehicles/",
+    species: "https://swapi.py4e.com/api/species/"
 };
 
+// ⭐ OPEN DETAIL
 export function openDetail(type, id) {
     window.dispatchEvent(
         new CustomEvent("open-detail", { detail: { type, id: String(id) } })
     );
 }
 
-export async function loadFeatured() {
-    const section = document.querySelector("#featured");
-    const container = document.querySelector(".featured-list");
-    if (!section || !container) return;
+// ⭐ HOME PAGE → Featured Characters, Planets, Starships, Movies
+export async function loadHome() {
+    // FIX: Only select lists that belong to HOME
+    const sections = document.querySelectorAll(".featured-list[data-type]");
 
-    container.innerHTML = "";
+    for (const sec of sections) {
+        const type = sec.dataset.type;
+        const ids = popular[type];
+        const endpoint = endpoints[type];
 
-    const type = normalizeType(section.dataset.type);
-    const ids = popular[type];
-    const endpoint = endpoints[type];
-    if (!ids || !endpoint) return;
+        if (!ids || !endpoint) continue;
 
-    for (const idNum of ids) {
-        const id = String(idNum);
-        const res = await fetch(`${endpoint}${idNum}/`);
-        const data = await res.json();
+        sec.innerHTML = "";
 
-        const item = { id, type, name: data.name || data.title };
+        for (const idNum of ids) {
+            const id = String(idNum);
+            const res = await fetch(`${endpoint}${idNum}/`);
+            const data = await res.json();
 
-        const card = document.createElement("div");
-        card.classList.add("featured-card");
+            const name = data.name || data.title || "Unknown";
 
-        card.innerHTML = `
-      <img src="${getImage(type, id)}" alt="${item.name}">
-      <h3>${item.name}</h3>
-
-      <div class="card-actions">
-        <button class="view-btn" type="button">View more</button>
-        <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-      </div>
-    `;
-
-        card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-        const favBtn = card.querySelector(".fav-btn");
-        favBtn.onclick = () => {
-            toggleFavorite(item);
-            favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-        };
-
-        container.appendChild(card);
-    }
-
-    initScrollButtons();
-}
-
-function initScrollButtons() {
-    const list = document.querySelector(".featured-list");
-    const left = document.querySelector(".left-btn");
-    const right = document.querySelector(".right-btn");
-
-    if (list && left && right) {
-        const cardWidth = 180 + 16;
-        left.onclick = () => list.scrollBy({ left: -cardWidth, behavior: "smooth" });
-        right.onclick = () => list.scrollBy({ left: cardWidth, behavior: "smooth" });
+            renderCard(sec, type, id, name);
+        }
     }
 }
 
-function extractId(url) {
-    const m = url.match(/\/(\d+)\/$/);
-    return m ? m[1] : null;
-}
-
+// ⭐ ALL ITEMS (Characters, Planets, Starships, Movies)
 export async function loadAll(type) {
-    const container = document.querySelector(".featured-list");
+    const container = document.querySelector("#featured .featured-list");
     const endpoint = endpoints[type];
     if (!container || !endpoint) return;
 
@@ -106,7 +80,7 @@ export async function loadAll(type) {
         let nextUrl = endpoint;
         let results = [];
 
-        while (nextUrl && results.length < 18) {
+        while (nextUrl && results.length < 50) {
             const res = await fetch(nextUrl);
             const data = await res.json();
             results = results.concat(data.results);
@@ -128,8 +102,9 @@ export async function loadAll(type) {
     }
 }
 
+// ⭐ FILTERED ITEMS (Light Side, Dark Side, Film filters)
 export async function loadFiltered(type, filter) {
-    const container = document.querySelector(".featured-list");
+    const container = document.querySelector("#featured .featured-list");
     const endpoint = endpoints[type];
     if (!container || !endpoint) return;
 
@@ -146,72 +121,95 @@ export async function loadFiltered(type, filter) {
     await loadAll(type);
 }
 
+// ⭐ PEOPLE FILTER (Light Side / Dark Side)
 async function loadPeopleFilter(filter, container, endpoint) {
-    const darkSide = ["vader", "darth", "sidious", "palpatine", "maul", "dooku", "kylo"];
-    const lightSide = ["luke", "leia", "obi-wan", "yoda", "rey", "finn", "han", "chewbacca"];
+    // Hämta ALLA sidor av people
+    let next = endpoint;
+    let all = [];
 
-    try {
-        const res = await fetch(endpoint);
+    while (next) {
+        const res = await fetch(next);
         const data = await res.json();
+        all = all.concat(data.results);
+        next = data.next;
+    }
 
-        container.innerHTML = "";
+    // SWAPI-kompatibla filter
+    const darkSide = ["vader", "sidious", "palpatine"];
+    const lightSide = ["luke", "leia", "obi-wan", "yoda", "han", "chewbacca"];
 
-        for (const item of data.results) {
-            const nameLower = (item.name || "").toLowerCase();
-            const id = extractId(item.url);
-            if (!id) continue;
+    container.innerHTML = "";
 
-            const matches =
-                filter === "dark"
-                    ? darkSide.some((x) => nameLower.includes(x))
-                    : filter === "light"
-                        ? lightSide.some((x) => nameLower.includes(x))
-                        : false;
+    for (const item of all) {
+        const nameLower = (item.name || "").toLowerCase();
+        const id = extractId(item.url);
+        if (!id) continue;
 
-            if (!matches) continue;
+        let matches = false;
 
-            renderCard(container, "people", id, item.name);
+        if (filter === "dark") {
+            matches = darkSide.some(x => nameLower.includes(x));
         }
 
-        if (!container.children.length) {
-            container.innerHTML = '<p class="no-results">No characters found for this filter.</p>';
+        if (filter === "light") {
+            matches = lightSide.some(x => nameLower.includes(x));
         }
-    } catch (err) {
-        console.error("Error loading filtered:", err);
-        container.innerHTML = '<p class="error">Could not load data.</p>';
+
+        if (!matches) continue;
+
+        renderCard(container, "people", id, item.name);
+    }
+
+    if (!container.children.length) {
+        container.innerHTML = `<p class="no-results">No characters found for this filter.</p>`;
     }
 }
 
+// ⭐ FILM FILTER (Skywalker / Standalone / Series)
 async function loadFilmFilter(filter, container, endpoint) {
-    try {
-        const res = await fetch(endpoint);
-        const data = await res.json();
+    const res = await fetch(endpoint);
+    const data = await res.json();
 
-        container.innerHTML = "";
+    container.innerHTML = "";
 
-        for (const item of data.results) {
-            const id = extractId(item.url);
-            if (!id) continue;
+    const films = data.results;
 
-            const episode = item.episode_id;
+    for (const item of films) {
+        const id = extractId(item.url);
+        if (!id) continue;
 
-            const matches =
-                (filter === "skywalker" && episode <= 6) ||
-                (filter === "standalone" && (episode === 1 || episode === 3)) ||
-                (filter === "series" && item.director === "Dave Filoni");
+        const episode = item.episode_id;
 
-            if (!matches) continue;
+        let matches = false;
 
-            renderCard(container, "films", id, item.title);
+        if (filter === "skywalker") {
+            matches = episode >= 1 && episode <= 6;
         }
 
-        if (!container.children.length) {
-            container.innerHTML = '<p class="no-results">No films found for this filter.</p>';
+        if (filter === "standalone") {
+            container.innerHTML = `<p class="no-results">SWAPI has no standalone films (Rogue One, Solo).</p>`;
+            return;
         }
-    } catch (err) {
-        console.error("Error loading filtered films:", err);
-        container.innerHTML = '<p class="error">Could not load data.</p>';
+
+        if (filter === "series") {
+            container.innerHTML = `<p class="no-results">SWAPI has no series films.</p>`;
+            return;
+        }
+
+        if (!matches) continue;
+
+        renderCard(container, "films", id, item.title);
     }
+
+    if (!container.children.length) {
+        container.innerHTML = `<p class="no-results">No films found for this filter.</p>`;
+    }
+}
+
+// ⭐ HELPERS
+function extractId(url) {
+    const m = url.match(/\/(\d+)\/$/);
+    return m ? m[1] : null;
 }
 
 function renderCard(container, type, id, name) {
@@ -219,14 +217,14 @@ function renderCard(container, type, id, name) {
     card.classList.add("featured-card");
 
     card.innerHTML = `
-    <img src="${getImage(type, id)}" alt="${name}">
-    <h3>${name}</h3>
+        <img src="${getImage(type, id)}" alt="${name}">
+        <h3>${name}</h3>
 
-    <div class="card-actions">
-      <button class="view-btn" type="button">View more</button>
-      <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-    </div>
-  `;
+        <div class="card-actions">
+            <button class="view-btn" type="button">View more</button>
+            <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+        </div>
+    `;
 
     card.querySelector(".view-btn").onclick = () => openDetail(type, id);
 

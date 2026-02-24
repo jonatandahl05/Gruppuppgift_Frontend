@@ -81,3 +81,17 @@ export function initNav() {
         });
     });
 }
+const navList = document.querySelector(".nav-links");
+const leftBtn = document.querySelector(".left-btn");
+const rightBtn = document.querySelector(".right-btn");
+
+if (leftBtn && rightBtn && navList) {
+    leftBtn.addEventListener("click", () => {
+        navList.scrollBy({ left: -200, behavior: "smooth" });
+    });
+
+    rightBtn.addEventListener("click", () => {
+        navList.scrollBy({ left: 200, behavior: "smooth" });
+    });
+}
+
