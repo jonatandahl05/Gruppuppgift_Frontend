@@ -79,7 +79,7 @@ export async function loadFeatured() {
         <button class="view-btn btn-primary" type="button">View more</button>
         <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
       </div>
-    `;
+    ;
 
       card.innerHTML = `
         <img src="${getImage(type, id)}" alt="${name}">
