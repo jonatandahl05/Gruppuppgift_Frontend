@@ -152,6 +152,7 @@ function setupDarkMode() {
   const toggleDarkModeBtn = document.getElementById("toggle-dark-mode");
 
   if (toggleDarkModeBtn) {
+    // Lägg till event listener för att växla dark mode
     toggleDarkModeBtn.addEventListener("click", () => {
       document.body.classList.toggle("dark-mode");
 
@@ -172,7 +173,3 @@ function setupDarkMode() {
 document.addEventListener("DOMContentLoaded", () => {
   setupDarkMode();
 });
-
-
-
-
