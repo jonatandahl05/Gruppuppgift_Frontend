@@ -54,7 +54,11 @@ export async function loadFeatured() {
     card.classList.add("featured-card");
 
     card.innerHTML = `
-      <img src="${getImage(type, id)}" alt="${item.name}">
+        <img 
+            src="${getImage(type, id)}" 
+            alt="${name}"
+            onerror="this.onerror=null; this.src='placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png';"
+        />      
       <h3>${item.name}</h3>
       <div class="card-actions">
         <button class="view-btn btn-primary" type="button">View more</button>
@@ -119,7 +123,11 @@ export async function loadAll(type) {
       card.classList.add("featured-card");
 
       card.innerHTML = `
-        <img src="${getImage(type, id)}" alt="${name}">
+        <img 
+            src="${getImage(type, id)}" 
+            alt="${name}"
+            onerror="this.onerror=null; this.src='placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png';"
+        />
         <h3>${name}</h3>
         <div class="card-actions">
           <button class="view-btn btn-primary" type="button">View more</button>
@@ -236,7 +244,11 @@ export async function loadFiltered(type, filter) {
       card.classList.add("featured-card");
 
       card.innerHTML = `
-        <img src="${getImage(type, id)}" alt="${name}">
+        <img 
+            src="${getImage(type, id)}" 
+            alt="${name}"
+            onerror="this.onerror=null; this.src='placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png';"
+        />
         <h3>${name}</h3>
         <div class="card-actions">
           <button class="view-btn btn-primary" type="button">View more</button>
