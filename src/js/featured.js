@@ -139,8 +139,6 @@ export async function loadFiltered(type, filter) {
     lastCategoryKey = newKey;
   }
 
-  // ✅ currentSort reset borttagen här
-
   section.dataset.view = "filtered";
   section.dataset.filter = filter;
   renderSortControl();
@@ -370,7 +368,6 @@ export async function loadAll(type) {
     lastCategoryKey = newKey;
   }
 
-  // ✅ currentSort reset borttagen här
 
   section.dataset.view = "all";
   delete section.dataset.filter;
