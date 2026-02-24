@@ -61,7 +61,20 @@ export async function loadHome() {
             const res = await fetch(`${endpoint}${idNum}/`);
             const data = await res.json();
 
-            const name = data.name || data.title || "Unknown";
+    const card = document.createElement("div");
+    card.classList.add("featured-card");
+
+    card.innerHTML = `
+      <img src="${getImage(type, id)}" alt="${item.name}">
+      <h3>${item.name}</h3>
+
+      <div class="card-actions">
+        <button class="view-btn btn-primary" type="button">View more</button>
+        <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+      </div>
+    `;
+
+    card.querySelector(".view-btn").onclick = () => openDetail(type, id);
 
             renderCard(sec, type, id, name);
         }
@@ -151,9 +164,11 @@ async function loadPeopleFilter(filter, container, endpoint) {
             matches = darkSide.some(x => nameLower.includes(x));
         }
 
-        if (filter === "light") {
-            matches = lightSide.some(x => nameLower.includes(x));
-        }
+        <div class="card-actions">
+          <button class="view-btn btn-primary" type="button">View more</button>
+          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+        </div>
+      `;
 
         if (!matches) continue;
 
@@ -186,10 +201,11 @@ async function loadFilmFilter(filter, container, endpoint) {
             matches = episode >= 1 && episode <= 6;
         }
 
-        if (filter === "standalone") {
-            container.innerHTML = `<p class="no-results">SWAPI has no standalone films (Rogue One, Solo).</p>`;
-            return;
-        }
+        <div class="card-actions">
+          <button class="view-btn btn-primary" type="button">View more</button>
+          <button class="fav-btn" type="button">${isFavorite(id, "people") ? "★" : "☆"}</button>
+        </div>
+      `;
 
         if (filter === "series") {
             container.innerHTML = `<p class="no-results">SWAPI has no series films.</p>`;
