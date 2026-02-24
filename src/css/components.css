@@ -192,6 +192,24 @@ button {
     margin-bottom: 1rem;
 }
 
+.detail-about {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-text) 4%, transparent);
+}
+
+.detail-about h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+}
+
+.detail-about p {
+    margin: 0;
+    line-height: 1.5;
+}
+
 .detail-info {
     display: grid;
     gap: 0.8rem;

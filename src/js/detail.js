@@ -1,4 +1,5 @@
 import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
+import { aboutSections } from "./aboutSections.js";
 
 const endpoints = {
     people: "https://swapi.py4e.com/api/people/",
@@ -28,6 +29,16 @@ export async function renderDetail(type, id) {
 
     const item = { id, type, name: data.name || data.title };
 
+    const aboutEntry = aboutSections[type] ? aboutSections[type][id] : null;
+    const aboutMarkup = aboutEntry
+        ? `
+        <section class="detail-about" aria-labelledby="detail-about-title">
+            <h2 id="detail-about-title">About</h2>
+            <p>${aboutEntry.about}</p>
+        </section>
+    `
+        : "";
+
     const infoFields = Object.entries(data)
         .filter(([_, value]) => typeof value === "string" || typeof value === "number")
         .map(([key, value]) => {
@@ -41,6 +52,8 @@ export async function renderDetail(type, id) {
         <h1>${item.name}</h1>
 
         <button id="fav-detail-btn" class="fav-btn"></button>
+
+        ${aboutMarkup}
 
         <div class="detail-info">${infoFields}</div>
     `;
