@@ -163,7 +163,7 @@ export async function loadAll(type) {
     let results = [];
 
     // Begränsa så det inte blir tungt (justera vid behov)
-    while (nextUrl && results.length < 18) {
+    while (nextUrl) {
       const res = await fetch(nextUrl);
       const data = await res.json();
       results = results.concat(data.results);
@@ -380,7 +380,7 @@ export async function loadFiltered(type, filter) {
     let nextUrl = endpoint;
     let results = [];
 
-    while (nextUrl && results.length < 30) {
+    while (nextUrl) {
       const res = await fetch(nextUrl);
       const data = await res.json();
       results = results.concat(data.results);
@@ -456,14 +456,6 @@ export async function loadFiltered(type, filter) {
       const id = extractId(item.url);
       if (!id) continue;
 
-      const matches =
-        filter === "dark"
-          ? darkSide.some((x) => nameLower.includes(x))
-          : filter === "light"
-          ? lightSide.some((x) => nameLower.includes(x))
-          : false;
-
-      if (!matches) continue;
 
       const name = item.name || "Unknown";
       const card = document.createElement("div");
