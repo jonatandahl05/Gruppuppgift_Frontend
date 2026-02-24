@@ -152,3 +152,29 @@ if ("serviceWorker" in navigator) {
     }
   });
 }
+
+function setupDarkMode() {
+  const toggleDarkModeBtn = document.getElementById("toggle-dark-mode");
+
+  if (toggleDarkModeBtn) {
+    // Lägg till event listener för att växla dark mode
+    toggleDarkModeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+
+      // Spara användarens val i localStorage
+      const isDarkMode = document.body.classList.contains("dark-mode");
+      localStorage.setItem("darkMode", isDarkMode);
+    });
+
+    // Kontrollera användarens tidigare val vid sidladdning
+    const isDarkMode = localStorage.getItem("darkMode") === "true";
+    if (isDarkMode) {
+      document.body.classList.add("dark-mode");
+    }
+  }
+}
+
+// Anropa funktionen efter att navigationen har renderats
+document.addEventListener("DOMContentLoaded", () => {
+  setupDarkMode();
+});

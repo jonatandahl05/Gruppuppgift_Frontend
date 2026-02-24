@@ -19,6 +19,12 @@ export function renderNav() {
           <span id="nav-search-hint" class="sr-only">Skriv för att söka och filtrera.</span>
         </form>
 
+
+<button id="theme-toggle" class="dark-mode-toggle" 
+        aria-label="Växla mörkt läge">
+  <span class="theme-toggle__icon">🌙</span>
+</button>
+
         <button class="nav-toggle" 
                 aria-label="Öppna meny"
                 aria-expanded="false">
@@ -168,3 +174,4 @@ function initMobileMenu() {
         });
     });
 }
+
