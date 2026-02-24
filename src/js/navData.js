@@ -23,7 +23,9 @@ export const menuData = [
         subItems: [
             { label: "All", action: "list", resource: "starships" },
             { label: "Imperial", action: "filter", resource: "starships", filter: "imperial" },
-            { label: "Rebel", action: "filter", resource: "starships", filter: "rebel" }
+            { label: "Rebel", action: "filter", resource: "starships", filter: "rebel" },
+            { label: "Separatist", action: "filter", resource: "starships", filter: "separatist"},
+            { label: "Republic", action: "filter", resource: "starships", filter: "republic"}
         ]
     },
     {
