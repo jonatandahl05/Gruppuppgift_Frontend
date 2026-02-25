@@ -1,5 +1,7 @@
 import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
 
+const PLACEHOLDER_IMG = "placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png";
+
 export function getImage(type, id) {
   const base =
     "https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img";
@@ -79,7 +81,11 @@ export async function loadFeatured() {
       card.classList.add("featured-card");
 
       card.innerHTML = `
-        <img src="${getImage(type, id)}" alt="${name}">
+        <img 
+            src="${getImage(type, id)}" 
+            alt="${name}" 
+            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
+        />
         <h3>${name}</h3>
 
         <div class="card-actions">
@@ -178,7 +184,11 @@ export async function loadAll(type) {
       card.classList.add("featured-card");
 
       card.innerHTML = `
-        <img src="${getImage(type, id)}" alt="${name}">
+        <img 
+            src="${getImage(type, id)}" 
+            alt="${name}" 
+            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
+        />        
         <h3>${name}</h3>
 
         <div class="card-actions">
@@ -241,7 +251,11 @@ export async function searchResource(type, query) {
       card.classList.add("featured-card");
 
       card.innerHTML = `
-        <img src="${getImage(type, id)}" alt="${name}">
+        <img 
+            src="${getImage(type, id)}" 
+            alt="${name}" 
+            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
+        />        
         <h3>${name}</h3>
 
         <div class="card-actions">
@@ -328,7 +342,11 @@ export async function searchAll(query) {
 
       card.innerHTML = `
         <div class="card-badge" aria-label="Type">${typeLabel}</div>
-        <img src="${getImage(type, id)}" alt="${name}">
+        <img 
+            src="${getImage(type, id)}" 
+            alt="${name}" 
+            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
+        />        
         <h3>${name}</h3>
 
         <div class="card-actions">
@@ -396,7 +414,11 @@ export async function loadFiltered(type, filter) {
       card.classList.add("featured-card");
 
       card.innerHTML = `
-        <img src="${getImage("people", id)}" alt="${name}">
+        <img 
+            src="${getImage(type, id)}" 
+            alt="${name}" 
+            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
+        />       
         <h3>${name}</h3>
 
         <div class="card-actions">

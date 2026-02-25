@@ -1,6 +1,8 @@
 import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
 import { aboutSections } from "./aboutSections.js";
 
+const PLACEHOLDER_IMG = "placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png";
+
 const endpoints = {
     people: "https://swapi.py4e.com/api/people/",
     planets: "https://swapi.py4e.com/api/planets/",
@@ -48,7 +50,12 @@ export async function renderDetail(type, id) {
         .join("");
 
     container.innerHTML = `
-        <img src="${getImage(type, id)}" class="detail-image">
+        <img 
+            src="${getImage(type, id)}" 
+            class="detail-image"
+            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
+        />        
+        
         <h1>${item.name}</h1>
 
         <button id="fav-detail-btn" class="fav-btn"></button>
