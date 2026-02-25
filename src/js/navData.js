@@ -7,8 +7,7 @@ export const menuData = [
             { label: "All", action: "list", resource: "people" },
             { label: "Favourites", action: "favorites", resource: "people" },
             { label: "Dark Side", action: "filter", resource: "people", filter: "dark" },
-            { label: "Light Side", action: "filter", resource: "people", filter: "light" },
-            { label: "Droids", action: "filter", resource: "people", filter: "droids" }
+            { label: "Light Side", action: "filter", resource: "people", filter: "light" }
         ]
     },
     {
@@ -22,11 +21,7 @@ export const menuData = [
         key: "starships",
         label: "Starships",
         subItems: [
-            { label: "All", action: "list", resource: "starships" },
-            { label: "Imperial", action: "filter", resource: "starships", filter: "imperial" },
-            { label: "Rebel", action: "filter", resource: "starships", filter: "rebel" },
-            { label: "Separatist", action: "filter", resource: "starships", filter: "separatist"},
-            { label: "Republic", action: "filter", resource: "starships", filter: "republic"}
+            { label: "All", action: "list", resource: "starships" }
         ]
     },
     {
