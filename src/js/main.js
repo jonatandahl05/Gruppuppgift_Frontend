@@ -1,4 +1,3 @@
-import "../css/style.css";
 import "../css/base.css";
 import "../css/layout.css";
 import "../css/responsive.css";
