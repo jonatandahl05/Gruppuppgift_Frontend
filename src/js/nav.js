@@ -53,6 +53,7 @@ export function renderNav() {
             </li>
           `).join("")}
         </ul>
+
       </nav>
     </header>
   `;
