@@ -1,34 +1,8 @@
 // navData.js
 export const menuData = [
-    {
-        key: "people",
-        label: "Characters",
-        subItems: [
-            { label: "All", action: "list", resource: "people" },
-            { label: "Favourites", action: "favorites", resource: "people" },
-            { label: "Dark Side", action: "filter", resource: "people", filter: "dark" },
-            { label: "Light Side", action: "filter", resource: "people", filter: "light" }
-        ]
-    },
-    {
-        key: "planets",
-        label: "Planets",
-        subItems: [
-            { label: "All", action: "list", resource: "planets" }
-        ]
-    },
-    {
-        key: "starships",
-        label: "Starships",
-        subItems: [
-            { label: "All", action: "list", resource: "starships" }
-        ]
-    },
-    {
-        key: "films",
-        label: "Movies",
-        subItems: [
-            { label: "All", action: "list", resource: "films" }
-        ]
-    }
+    { label: "Characters", action: "list", resource: "people" },
+    { label: "Planets",    action: "list", resource: "planets" },
+    { label: "Starships",  action: "list", resource: "starships" },
+    { label: "Movies",     action: "list", resource: "films" },
+    { label: "Favourites", action: "favorites", resource: "" },
 ];

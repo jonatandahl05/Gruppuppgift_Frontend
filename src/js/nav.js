@@ -32,24 +32,13 @@ export function renderNav() {
         </button>
 
         <ul class="nav-links">
-          ${menuData.map(cat => `
-            <li class="nav-item">
-              <button class="nav-main" data-key="${cat.key}">
-                ${cat.label}
+          ${menuData.map(item => `
+            <li>
+              <button class="nav-link-btn"
+                      data-action="${item.action}"
+                      data-resource="${item.resource}">
+                ${item.label}
               </button>
-              <ul class="sub-menu" data-parent="${cat.key}">
-                ${cat.subItems.map(sub => `
-                  <li>
-                    <button
-                      class="sub-item"
-                      data-action="${sub.action}"
-                      data-resource="${sub.resource || ""}"
-                      data-filter="${sub.filter || ""}">
-                      ${sub.label}
-                    </button>
-                  </li>
-                `).join("")}
-              </ul>
             </li>
           `).join("")}
         </ul>
@@ -73,6 +62,7 @@ export function initNav() {
         navToggle.classList.remove("active");
         navLinks.classList.remove("active");
         overlay.classList.remove("active");
+        navToggle.setAttribute("aria-expanded", "false");
         document.body.style.overflow = "";
     }
 
@@ -93,7 +83,7 @@ export function initNav() {
         if (e.key === "Escape") closeMobileMenu();
     });
 
-    document.querySelectorAll(".sub-item").forEach(btn => {
+    document.querySelectorAll(".nav-link-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             const action = btn.dataset.action;
             const resource = btn.dataset.resource;
