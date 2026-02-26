@@ -809,4 +809,7 @@ html.dark-theme .offline-banner {
     scroll-snap-align: center !important;
 }
 
-
+#filter-bar {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
