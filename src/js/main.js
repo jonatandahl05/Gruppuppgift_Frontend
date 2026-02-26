@@ -1,8 +1,4 @@
 import "../css/style.css";
-import "../css/base.css";
-import "../css/layout.css";
-import "../css/responsive.css";
-import "../css/components.css";
 
 import { renderNav, initNav } from "./nav.js";
 import { initOfflineBanner } from "./offlineBanner.js";
