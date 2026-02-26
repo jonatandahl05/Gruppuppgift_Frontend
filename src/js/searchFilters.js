@@ -1,7 +1,20 @@
 import { getImage, openDetail } from "./featured.js";
 import { toggleFavorite, isFavorite } from "./favStore.js";
 
-let allPeople = [];
+const FILTERS = {
+    people: {
+        field: "gender",
+        label: "Gender",
+        options: null,
+    },
+    planets: {
+        field: "climate",
+        label: "Climate",
+        options: null, // null gör så det använder data från swapi för alternativ
+    },
+};
+
+let cachedData = [];
 
 function extractId(url) {
     return url.match(/\/(\d+)\/$/)?.[1];
@@ -52,30 +65,54 @@ function renderCards(type, items) {
     }
 }
 
-export async function activateFilters(type) {
-    if (type !== "people") return;
+function buildOptions(config, data) {
+    if (config.options) return config.options;
 
-    updateTitle(type);
+    return [...new Set(
+        data.flatMap(item => (item[config.field] || "")
+            .split(",")
+            .map(v => v.trim()))
+            .filter(v => v && v !== "unknown" && v !== "n/a")
+    )].sort();
+}
 
+// ── Filtrera data ──
+function filterData(data, field, value) {
+    if (!value) return data;
+    return data.filter(item =>
+        (item[field] || "").toLowerCase().includes(value.toLowerCase())
+    );
+}
+
+// ── Hämta alla sidor ──
+async function fetchAll(type) {
     let results = [];
-    let url = "https://swapi.py4e.com/api/people/";
+    let url = `https://swapi.py4e.com/api/${type}/`;
     while (url) {
         const res = await fetch(url);
         const json = await res.json();
         results = results.concat(json.results);
         url = json.next;
     }
-    allPeople = results;
+    return results;
+}
+
+export async function activateFilters(type) {
+    const config = FILTERS[type];
+    if (!config) return;
+
+    updateTitle(type);
+    cachedData = await fetchAll(type);
+
+    const options = buildOptions(config, cachedData);
 
     const bar = document.createElement("div");
     bar.id = "filter-bar";
     bar.innerHTML = `
-    <label for="gender-filter">Gender:</label>
-    <select id="gender-filter">
+    <label for="${config.field}-filter">${config.label}:</label>
+    <select id="${config.field}-filter">
       <option value="">All</option>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-      <option value="n/a">N/A</option>
+      ${options.map(o => `<option value="${o}">${o}</option>`).join("")}
     </select>
   `;
 
@@ -83,16 +120,14 @@ export async function activateFilters(type) {
     const list = document.querySelector(".featured-list");
     section.insertBefore(bar, list);
 
-    bar.querySelector("#gender-filter").onchange = (e) => {
-        const val = e.target.value;
-        const filtered = val ? allPeople.filter(p => p.gender === val) : allPeople;
-        renderCards("people", filtered);
+    bar.querySelector("select").onchange = (e) => {
+        renderCards(type, filterData(cachedData, config.field, e.target.value));
     };
 
-    renderCards("people", allPeople);
+    renderCards(type, cachedData);
 }
 
 export function deactivateFilters() {
     document.getElementById("filter-bar")?.remove();
-    allPeople = [];
+    cachedData = [];
 }
