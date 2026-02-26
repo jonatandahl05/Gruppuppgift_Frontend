@@ -4,10 +4,11 @@ const API_CACHE = `api-${VERSION}`;
 
 // Vi cachar "shell" via runtime (när de requestas) + kan pre-cacha alla våra html + manifest + ikon.
 const PRECACHE_URLS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./star-wars.png"
+  "/Gruppuppgift_Frontend/",
+  "/Gruppuppgift_Frontend/index.html",
+  "/Gruppuppgift_Frontend/manifest.json",
+  "/Gruppuppgift_Frontend/star-wars-192.png",
+  "/Gruppuppgift_Frontend/star-wars-512.png"
 ];
 
 self.addEventListener("install", (event) => {
