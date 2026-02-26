@@ -52,8 +52,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (backBtn) backBtn.onclick = () => show(featured);
 
   // 8) NAV adapter: dropdown-nav dispatchar nav:viewChange
-  window.addEventListener("nav:viewChange", (e) => {
+  window.addEventListener("nav:viewChange", async (e) => {
     const { action, resource, filter } = e.detail || {};
+    const sf = await import("./searchFilters.js");
+    sf.deactivateFilters();
 
     // 1) Favourites
     if (action === "favorites") {
@@ -70,7 +72,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 2) All
     if (action === "list") {
-      import("./featured.js").then((m) => m.loadAll(resource));
+        if (["people", "planets", "starships", "films"].includes(resource)) {
+            sf.activateFilters(resource);
+        } else {
+            import("./featured.js").then((m) => m.loadAll(resource));
+        }
       show(featured);
       return;
     }
@@ -145,10 +151,11 @@ function initThemeToggle() {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      await navigator.serviceWorker.register("./service-worker.js");
-      console.log("Service Worker registered ✅");
+        const base = import.meta.env.BASE_URL;
+        await navigator.serviceWorker.register(`${base}service-worker.js`);
+        console.log("Service Worker registered ✅");
     } catch (err) {
-      console.error("Service Worker registration failed ❌", err);
+        console.error("Service Worker registration failed ❌", err);
     }
   });
 }
