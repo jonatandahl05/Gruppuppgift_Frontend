@@ -12,6 +12,16 @@ const FILTERS = {
         label: "Climate",
         options: null, // null gör så det använder data från swapi för alternativ
     },
+    starships: {
+        field: "starship_class",
+        label: "Ship Class",
+        options: null,
+    },
+    films: {
+        field: "director",
+        label: "Director",
+        options: null,
+    },
 };
 
 let cachedData = [];

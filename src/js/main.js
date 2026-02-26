@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 2) All
     if (action === "list") {
-        if (resource==="people" || resource === "planets") {
+        if (["people", "planets", "starships", "films"].includes(resource)) {
             sf.activateFilters(resource);
         } else {
             import("./featured.js").then((m) => m.loadAll(resource));
