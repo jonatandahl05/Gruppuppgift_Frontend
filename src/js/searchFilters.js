@@ -89,9 +89,12 @@ function buildOptions(config, data) {
 // ── Filtrera data ──
 function filterData(data, field, value) {
     if (!value) return data;
-    return data.filter(item =>
-        (item[field] || "").toLowerCase().includes(value.toLowerCase())
-    );
+    return data.filter(item => {
+        const cell = (item[field] || "").toLowerCase();
+        const search = value.toLowerCase();
+        const values = cell.split(",").map(v => v.trim());
+        return values.includes(search);
+    });
 }
 
 // ── Hämta alla sidor ──
@@ -112,9 +115,36 @@ export async function activateFilters(type) {
     if (!config) return;
 
     updateTitle(type);
-    cachedData = await fetchAll(type);
 
-    const options = buildOptions(config, cachedData);
+    const container = document.querySelector(".featured-list");
+    container.innerHTML = '<p class="loading">Loading...</p>';
+
+    const firstRes = await fetch(`https://swapi.py4e.com/api/${type}/`);
+    const firstPage = await firstRes.json();
+    cachedData = firstPage.results;
+
+    renderCards(type, cachedData);
+    injectFilterBar(type, config);
+
+    let nextUrl = firstPage.next;
+    while (nextUrl) {
+        const res = await fetch(nextUrl);
+        const json = await res.json();
+        cachedData = cachedData.concat(json.results);
+        nextUrl = json.next;
+
+        updateFilterOptions(config);
+    }
+}
+
+export function deactivateFilters() {
+    document.getElementById("filter-bar")?.remove();
+    cachedData = [];
+}
+
+function injectFilterBar(type, config) {
+    const existing = document.getElementById("filter-bar");
+    if (existing) return;
 
     const bar = document.createElement("div");
     bar.id = "filter-bar";
@@ -122,7 +152,6 @@ export async function activateFilters(type) {
     <label for="${config.field}-filter">${config.label}:</label>
     <select id="${config.field}-filter">
       <option value="">All</option>
-      ${options.map(o => `<option value="${o}">${o}</option>`).join("")}
     </select>
   `;
 
@@ -134,10 +163,23 @@ export async function activateFilters(type) {
         renderCards(type, filterData(cachedData, config.field, e.target.value));
     };
 
-    renderCards(type, cachedData);
+    updateFilterOptions(config);
 }
 
-export function deactivateFilters() {
-    document.getElementById("filter-bar")?.remove();
-    cachedData = [];
+function updateFilterOptions(config) {
+    const select = document.getElementById(`${config.field}-filter`);
+    if (!select) return;
+
+    const currentValue = select.value;
+
+    const options = [...new Set(
+        cachedData.flatMap(item => (item[config.field] || "")
+            .split(",")
+            .map(v => v.trim()))
+            .filter(v => v && v !== "unknown" && v !== "n/a")
+    )].sort();
+
+    select.innerHTML =
+        `<option value="">All</option>` +
+        options.map(o => `<option value="${o}"${o === currentValue ? " selected" : ""}>${o}</option>`).join("");
 }
