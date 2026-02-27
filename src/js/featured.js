@@ -1,4 +1,15 @@
+
+// Här är vart vi rendrerar datan som vi har eventuellt filtrerat och vill visa
+
 import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
+import {
+  fetchById,
+  fetchAllLimited,
+  searchType,
+  searchAllTypes,
+  fetchPage,
+  extractId,
+} from "./fetchData.js";
 
 const PLACEHOLDER_IMG = "placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png";
 
@@ -20,13 +31,6 @@ const popular = {
   films: [1, 2, 3],
 };
 
-const endpoints = {
-  people: "https://swapi.py4e.com/api/people/",
-  planets: "https://swapi.py4e.com/api/planets/",
-  starships: "https://swapi.py4e.com/api/starships/",
-  films: "https://swapi.py4e.com/api/films/",
-};
-
 export function openDetail(type, id) {
   window.dispatchEvent(
     new CustomEvent("open-detail", { detail: { type, id: String(id) } })
@@ -44,7 +48,6 @@ export async function loadFeatured() {
 
   const type = normalizeType(section.dataset.type);
   const ids = popular[type];
-  const endpoint = endpoints[type];
   if (!ids || !endpoint) return;
 
   // Reset UI direkt
@@ -67,9 +70,8 @@ export async function loadFeatured() {
     const id = String(idNum);
 
     try {
-      const res = await fetch(`${endpoint}${idNum}/`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+
+      const data = await fetchById(type, idNum);
 
       // Om användaren bytte view under tiden: avbryt render
       if (section.dataset.loadToken !== token) return;
@@ -148,30 +150,16 @@ export async function loadFeatured() {
 }
 
 
-
-function extractId(url) {
-  const m = url.match(/\/(\d+)\/$/);
-  return m ? m[1] : null;
-}
-
 export async function loadAll(type) {
   const container = document.querySelector(".featured-list");
-  const endpoint = endpoints[type];
-  if (!container || !endpoint) return;
+
+  if (!container) return;
 
   container.innerHTML = '<p class="loading">Loading...</p>';
 
   try {
-    let nextUrl = endpoint;
-    let results = [];
-
-    // Begränsa så det inte blir tungt (justera vid behov)
-    while (nextUrl && results.length < 18) {
-      const res = await fetch(nextUrl);
-      const data = await res.json();
-      results = results.concat(data.results);
-      nextUrl = data.next;
-    }
+    
+    const results = await fetchAllLimited(type, 10); // Begränsa så det inte blir tungt (justera vid behov)
 
     container.innerHTML = "";
 
@@ -216,8 +204,8 @@ export async function loadAll(type) {
 
 export async function searchResource(type, query) {
   const container = document.querySelector(".featured-list");
-  const endpoint = endpoints[type];
-  if (!container || !endpoint) return;
+
+  if (!container) return;
 
   const q = (query || "").trim();
   if (!q) {
@@ -229,16 +217,7 @@ export async function searchResource(type, query) {
 
   try {
     // SWAPI stödjer ?search=
-    let nextUrl = `${endpoint}?search=${encodeURIComponent(q)}`;
-    let results = [];
-
-    // Håll det lätt: max 18 kort (samma känsla som loadAll)
-    while (nextUrl && results.length < 18) {
-      const res = await fetch(nextUrl);
-      const data = await res.json();
-      results = results.concat(data.results || []);
-      nextUrl = data.next;
-    }
+    const results = await searchType(type, q, 10); // Håll det lätt: max 10 kort (samma känsla som loadAll)
 
     container.innerHTML = "";
 
@@ -296,20 +275,8 @@ export async function searchAll(query) {
 
   container.innerHTML = '<p class="loading">Searching across all...</p>';
 
-  const types = ["people", "planets", "starships", "films"];
-
   try {
-    // Kör parallellt – snabbare än att vänta typ för typ
-    const responses = await Promise.all(
-      types.map(async (type) => {
-        const endpoint = endpoints[type];
-        const url = `${endpoint}?search=${encodeURIComponent(q)}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        const results = (data.results || []).slice(0, 8); // håll det lätt
-        return { type, results };
-      })
-    );
+    const responses = await searchAllTypes(q, 8);
 
     // Flatta och tagga items med typ
     const all = responses.flatMap(({ type, results }) =>
@@ -365,7 +332,8 @@ export async function searchAll(query) {
 
       container.appendChild(card);
     }
-  } catch (err) {
+  } 
+  catch (err) {
     console.error("Error searching across all:", err);
     container.innerHTML = '<p class="error">Could not search across all data.</p>';
   }
@@ -379,8 +347,8 @@ export async function loadFiltered(type, filter) {
   }
 
   const container = document.querySelector(".featured-list");
-  const endpoint = endpoints[type];
-  if (!container || !endpoint) return;
+
+  if (!container) return;
 
   container.innerHTML = '<p class="loading">Loading...</p>';
 
@@ -388,10 +356,7 @@ export async function loadFiltered(type, filter) {
   const lightSide = ["luke", "leia", "obi-wan", "yoda", "rey", "finn", "han", "chewbacca"];
 
   try {
-    // För enkelhet: första sidan räcker ofta för demo.
-    // Vill ni göra det bättre: loopa pages som i loadAll och filtrera över fler results.
-    const res = await fetch(endpoint);
-    const data = await res.json();
+    const data = await fetchPage(type, 1);
 
     container.innerHTML = "";
 
