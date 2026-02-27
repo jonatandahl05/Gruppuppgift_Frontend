@@ -7,6 +7,7 @@ export function createCard(item, type, options = {}) {
     showBadge = false,
     badgeLabel = "",
     viewBtnClass = "",
+    onFavoriteToggle = null,
   } = options;
 
   const id = String(item.id ?? item.url?.match(/\/(\d+)\/$/)?.[1] ?? "");
@@ -41,7 +42,19 @@ export function createCard(item, type, options = {}) {
   const favBtn = card.querySelector(".fav-btn");
   favBtn.onclick = () => {
     toggleFavorite({ id, type, name });
-    favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
+
+    const favoriteNow = isFavorite(id, type);
+    favBtn.textContent = favoriteNow ? "★" : "☆";
+
+    if (typeof onFavoriteToggle === "function") {
+      onFavoriteToggle({
+        card,
+        id,
+        type,
+        name,
+        isFavorite: favoriteNow,
+      });
+    }
   };
 
   return card;

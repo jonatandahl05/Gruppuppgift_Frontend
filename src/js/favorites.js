@@ -35,17 +35,36 @@ export function renderFavorites() {
             heading.textContent = type;
             container.appendChild(heading);
 
-            const wrapper = document.createElement("div");
-            wrapper.className = "favorites-wrapper";
+    const wrapper = document.createElement("div");
+    wrapper.className = "favorites-wrapper";
 
-            const list = document.createElement("div");
-            list.className = "favorites-list";
+    const list = document.createElement("div");
+    list.className = "favorites-list";
 
-            for (const item of items) {
-                const card = createCard(item, type, { viewBtnClass: "btn-primary" });
-                if (!card) continue;
-                list.appendChild(card);
+    for (const item of items) {
+        const card = createCard(item, type, {
+            viewBtnClass: "btn-primary",
+            onFavoriteToggle: ({ card, isFavorite }) => {
+                if (isFavorite) return;
+
+                card.remove();
+
+                // om listan blev tom, ta bort hela sektionen för typen
+                if (!list.children.length) {
+                    wrapper.remove();
+                    heading.remove();
+                }
+
+                // om inga favoriter finns kvar alls, visa tom-text
+                if (!container.querySelector(".favorites-list")) {
+                    container.innerHTML = `<p>No favorites saved yet.</p>`;
+                }
             }
+        });
+
+        if (!card) continue;
+        list.appendChild(card);
+    }
 
             wrapper.appendChild(list);
             container.appendChild(wrapper);
