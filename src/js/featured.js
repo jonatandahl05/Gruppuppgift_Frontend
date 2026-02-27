@@ -1,7 +1,7 @@
 
 // Här är vart vi rendrerar datan som vi har eventuellt filtrerat och vill visa
 
-import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
+import { normalizeType } from "./favStore.js";
 import {
   fetchById,
   fetchAllLimited,
@@ -10,19 +10,9 @@ import {
   fetchPage,
   extractId,
 } from "./fetchData.js";
-
-const PLACEHOLDER_IMG = "placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png";
-
-export function getImage(type, id) {
-  const base =
-    "https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img";
-  return {
-    people: `${base}/characters/${id}.jpg`,
-    planets: `${base}/planets/${id}.jpg`,
-    starships: `${base}/starships/${id}.jpg`,
-    films: `${base}/films/${id}.jpg`,
-  }[type];
-}
+import { getImage, PLACEHOLDER_IMG } from "./media.js";
+import { openDetail } from "./detailEvents.js";
+import { createCard } from "./card.js";
 
 const popular = {
   people: [1, 4, 5, 10, 11],
@@ -30,12 +20,6 @@ const popular = {
   starships: [9, 10, 11],
   films: [1, 2, 3],
 };
-
-export function openDetail(type, id) {
-  window.dispatchEvent(
-    new CustomEvent("open-detail", { detail: { type, id: String(id) } })
-  );
-}
 
 export async function loadFeatured() {
   const section = document.querySelector("#featured");
@@ -76,33 +60,8 @@ export async function loadFeatured() {
       // Om användaren bytte view under tiden: avbryt render
       if (section.dataset.loadToken !== token) return;
 
-      const name = data.name || data.title || "Unknown";
-      const item = { id, type, name };
-
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
-      card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />
-        <h3>${name}</h3>
-
-        <div class="card-actions">
-          <button class="view-btn" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite(item);
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-      };
+      const card = createCard({ ...data, id }, type);
+      if (!card) return;
 
       // Ersätt placeholder på samma index (så ordningen blir stabil)
       const placeholder = container.children[index];
@@ -225,32 +184,8 @@ export async function searchResource(type, query) {
       const id = extractId(item.url);
       if (!id) continue;
 
-      const name = item.name || item.title || "Unknown";
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
-      card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />        
-        <h3>${name}</h3>
-
-        <div class="card-actions">
-          <button class="view-btn" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite({ id, type, name });
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-      };
-
+      const card = createCard(item, type, { viewBtnClass: "btn-primary" });
+      if (!card) continue;
       container.appendChild(card);
     }
 
@@ -296,10 +231,6 @@ export async function searchAll(query) {
       const id = extractId(item.url);
       if (!id) continue;
 
-      const name = item.name || item.title || "Unknown";
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
       const typeLabel =
         type === "people" ? "Character" :
         type === "planets" ? "Planet" :
@@ -307,29 +238,12 @@ export async function searchAll(query) {
         type === "films" ? "Film" :
         type;
 
-      card.innerHTML = `
-        <div class="card-badge" aria-label="Type">${typeLabel}</div>
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />        
-        <h3>${name}</h3>
+      const card = createCard(item, type, {
+        showBadge: true,
+        badgeLabel: typeLabel,
+      });
 
-        <div class="card-actions">
-          <button class="view-btn" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite({ id, type, name });
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-      };
-
+      if (!card) continue;
       container.appendChild(card);
     }
   } 
@@ -374,32 +288,8 @@ export async function loadFiltered(type, filter) {
 
       if (!matches) continue;
 
-      const name = item.name || "Unknown";
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
-      card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />       
-        <h3>${name}</h3>
-
-        <div class="card-actions">
-          <button class="view-btn btn-primary" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, "people") ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail("people", id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite({ id, type: "people", name });
-        favBtn.textContent = isFavorite(id, "people") ? "★" : "☆";
-      };
-
+      const card = createCard(item, "people", { viewBtnClass: "btn-primary" });
+      if (!card) continue;
       container.appendChild(card);
     }
 
