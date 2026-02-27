@@ -31,7 +31,7 @@ export function createCard(item, type, options = {}) {
     <h3>${name}</h3>
 
     <div class="card-actions">
-      <button class="view-btn ${viewBtnClass}".trim() type="button">View more</button>
+      <button class="${`view-btn ${viewBtnClass}`.trim()}" type="button">View more</button>
       <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
     </div>
   `;

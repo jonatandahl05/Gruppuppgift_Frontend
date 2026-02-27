@@ -123,38 +123,13 @@ export async function loadAll(type) {
     container.innerHTML = "";
 
     for (const item of results) {
-      const id = extractId(item.url);
-      if (!id) continue;
-
-      const name = item.name || item.title || "Unknown";
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
-      card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />        
-        <h3>${name}</h3>
-
-        <div class="card-actions">
-          <button class="view-btn btn-primary" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite({ id, type, name });
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-      };
-
+      const card = createCard(item, type, { viewBtnClass: "btn-primary" });
+      if (!card) continue;
       container.appendChild(card);
     }
-  } catch (err) {
+
+  } 
+  catch (err) {
     console.error("Error loading all:", err);
     container.innerHTML = '<p class="error">Could not load data.</p>';
   }

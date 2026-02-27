@@ -1,3 +1,5 @@
+console.log("MAIN.JS is running");
+
 import "../css/style.css";
 
 import { renderNav, initNav } from "./nav.js";
