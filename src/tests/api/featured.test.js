@@ -1,6 +1,7 @@
 // src/tests/api/featured.test.js
 
-import { loadFeatured, loadAll, getImage } from "../../js/featured.js";
+import { loadFeatured, loadAll } from "../../js/featured.js";
+import { getImage } from "../../js/media.js";
 
 describe("getImage", () => {
     it("returns correct URL for people", () => {
