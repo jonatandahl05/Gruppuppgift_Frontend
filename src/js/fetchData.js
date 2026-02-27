@@ -73,3 +73,16 @@ export async function searchAllTypes(query, perTypeLimit = 8) {
     }))
   );
 }
+
+export async function fetchAll(type) {
+  let nextUrl = endpoints[type];
+  let results = [];
+
+  while (nextUrl) {
+    const data = await fetchJson(nextUrl);
+    results = results.concat(data.results || []);
+    nextUrl = data.next;
+  }
+
+  return results;
+}
