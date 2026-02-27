@@ -1,5 +1,9 @@
+
+// Filtrerar datan baserat på vad för urval användaren vill ha
+
 import { getImage, openDetail } from "./featured.js";
 import { toggleFavorite, isFavorite } from "./favStore.js";
+import { fetchPage } from "./fetchData.js";
 
 const FILTERS = {
     people: {

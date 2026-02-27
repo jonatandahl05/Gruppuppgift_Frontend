@@ -48,7 +48,7 @@ export async function loadFeatured() {
 
   const type = normalizeType(section.dataset.type);
   const ids = popular[type];
-  if (!ids || !endpoint) return;
+  if (!ids) return;
 
   // Reset UI direkt
   container.innerHTML = "";

@@ -1,5 +1,5 @@
 
-// Vi fetchar datan här
+// Vi fetchar datan ifrån API:n härifrån, alla fetchning ska ske via denna fil och dess metoder.
 
 const API_BASE = "https://swapi.py4e.com/api";
 
