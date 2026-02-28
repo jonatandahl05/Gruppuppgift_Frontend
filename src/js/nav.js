@@ -6,28 +6,28 @@ export function renderNav() {
       <nav class="container nav">
         <a href="./index.html" class="logo">SW</a>
 
-        <form class="nav-search" role="search" aria-label="Sök" autocomplete="off">
-          <label class="sr-only" for="nav-search-input">Sök sida</label>
+        <form class="nav-search" role="search" aria-label="Search" autocomplete="off">
+          <label class="sr-only" for="nav-search-input">Search side</label>
           <input
             id="nav-search-input"
             class="nav-search-input"
             type="search"
             name="q"
-            placeholder="Sök..."
+            placeholder="Search..."
             aria-describedby="nav-search-hint"
           />
-          <span id="nav-search-hint" class="sr-only">Skriv för att söka och filtrera.</span>
+          <span id="nav-search-hint" class="sr-only">Type to search and filter.</span>
         </form>
 
 
         <button
-          id="theme-toggle" class="dark-mode-toggle" type="button" aria-label="Växla mörkt läge" aria-pressed="false">
+          id="theme-toggle" class="dark-mode-toggle" type="button" aria-label="Change to Darktheme" aria-pressed="false">
           <span class="theme-toggle__icon">🌙</span>
         </button>
 
         <button class="nav-toggle"
           type="button"
-          aria-label="Öppna meny"
+          aria-label="Open menu"
           aria-expanded="false"
           aria-controls="primary-navigation">
           <span class="hamburger"></span>
