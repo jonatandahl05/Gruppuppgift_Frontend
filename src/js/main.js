@@ -131,16 +131,20 @@ function initThemeToggle() {
   if (!btn) return;
 
   const saved = localStorage.getItem("theme");
+  const icon = btn.querySelector(".theme-toggle__icon");
+
   if (saved === "dark") {
     document.documentElement.classList.add("dark-theme");
-    const icon = btn.querySelector(".theme-toggle__icon");
     if (icon) icon.textContent = "☀️";
+    btn.setAttribute("aria-pressed", "true");
+  } else {
+    btn.setAttribute("aria-pressed", "false");
   }
 
   btn.onclick = () => {
     const isDark = document.documentElement.classList.toggle("dark-theme");
-    const icon = btn.querySelector(".theme-toggle__icon");
     if (icon) icon.textContent = isDark ? "☀️" : "🌙";
+    btn.setAttribute("aria-pressed", String(isDark));
     localStorage.setItem("theme", isDark ? "dark" : "light");
   };
 }
@@ -172,29 +176,3 @@ if ("serviceWorker" in navigator) {
     }
   });
 }
-
-function setupDarkMode() {
-  const toggleDarkModeBtn = document.getElementById("toggle-dark-mode");
-
-  if (toggleDarkModeBtn) {
-    // Lägg till event listener för att växla dark mode
-    toggleDarkModeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-
-      // Spara användarens val i localStorage
-      const isDarkMode = document.body.classList.contains("dark-mode");
-      localStorage.setItem("darkMode", isDarkMode);
-    });
-
-    // Kontrollera användarens tidigare val vid sidladdning
-    const isDarkMode = localStorage.getItem("darkMode") === "true";
-    if (isDarkMode) {
-      document.body.classList.add("dark-mode");
-    }
-  }
-}
-
-// Anropa funktionen efter att navigationen har renderats
-document.addEventListener("DOMContentLoaded", () => {
-  setupDarkMode();
-});

@@ -21,7 +21,7 @@ export function renderNav() {
 
 
         <button
-          id="theme-toggle" class="dark-mode-toggle" type="button" aria-label="Change to Darktheme" aria-pressed="false">
+          id="theme-toggle" class="dark-mode-toggle" type="button" aria-label="Toggle Dark mode" aria-pressed="false">
           <span class="theme-toggle__icon">🌙</span>
         </button>
 
