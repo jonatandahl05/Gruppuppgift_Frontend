@@ -1,9 +1,12 @@
-import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
-import { getImage, openDetail } from "./featured.js";
+
+// Rendrerar favoriter baserat på vad som favStore.js har sparat.
+
+import { getFavorites, normalizeType } from "./favStore.js";
+import { createCard } from "./card.js";
 
 export function renderFavorites() {
     const container = document.getElementById("favorites-container");
-    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const favorites = getFavorites();
 
     if (favorites.length === 0) {
         container.innerHTML = `<p>No favorites saved yet...</p>`;
@@ -22,46 +25,48 @@ export function renderFavorites() {
         if (groups[type]) groups[type].push(f);
     });
 
-    container.innerHTML = Object.entries(groups)
+    container.innerHTML = "";
+    Object.entries(groups)
         .filter(([_, items]) => items.length > 0)
-        .map(([type, items]) => `
-            <h2 style="margin-top:1.5rem; text-transform:capitalize;">${type}</h2>
+        .forEach(([type, items]) => {
+            const heading = document.createElement("h2");
+            heading.style.marginTop = "1.5rem";
+            heading.style.textTransform = "capitalize";
+            heading.textContent = type;
+            container.appendChild(heading);
 
-            <div class="favorites-wrapper">
-                <div class="favorites-list">
-                    ${items.map(item => `
-                        <div class="featured-card" 
-                             data-id="${item.id}" 
-                             data-type="${item.type}">
-                             
-                            <img src="${getImage(item.type, item.id)}">
-                            <h3>${item.name}</h3>
+    const wrapper = document.createElement("div");
+    wrapper.className = "favorites-wrapper";
 
-                            <div class="card-actions">
-                                <button class="view-btn btn-primary" type="button">View more</button>
-                                <button class="fav-btn">${isFavorite(item.id, item.type) ? "★" : "☆"}</button>
-                            </div>
-                        </div>
-                    `).join("")}
-                </div>
-            </div>
-        `).join("");
+    const list = document.createElement("div");
+    list.className = "favorites-list";
 
-    container.querySelectorAll(".featured-card").forEach(card => {
-        const id = String(card.dataset.id);
-        const type = card.dataset.type;
-        const name = card.querySelector("h3").textContent;
+    for (const item of items) {
+        const card = createCard(item, type, {
+            viewBtnClass: "btn-primary",
+            onFavoriteToggle: ({ card, isFavorite }) => {
+                if (isFavorite) return;
 
-        const item = { id, type, name };
+                card.remove();
 
-        const viewBtn = card.querySelector(".view-btn");
-        const favBtn = card.querySelector(".fav-btn");
+                // om listan blev tom, ta bort hela sektionen för typen
+                if (!list.children.length) {
+                    wrapper.remove();
+                    heading.remove();
+                }
 
-        viewBtn.onclick = () => openDetail(type, id);
+                // om inga favoriter finns kvar alls, visa tom-text
+                if (!container.querySelector(".favorites-list")) {
+                    container.innerHTML = `<p>No favorites saved yet.</p>`;
+                }
+            }
+        });
 
-        favBtn.onclick = () => {
-            toggleFavorite(item);
-            renderFavorites();
-        };
+        if (!card) continue;
+        list.appendChild(card);
+    }
+
+            wrapper.appendChild(list);
+            container.appendChild(wrapper);
     });
 }

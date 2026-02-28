@@ -1,3 +1,5 @@
+console.log("MAIN.JS is running");
+
 import "../css/style.css";
 
 import { renderNav, initNav } from "./nav.js";
@@ -146,12 +148,27 @@ function initThemeToggle() {
 // 9) Service Worker (PWA)
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
-    try {
-        const base = import.meta.env.BASE_URL;
-        await navigator.serviceWorker.register(`${base}service-worker.js`);
-        console.log("Service Worker registered ✅");
-    } catch (err) {
-        console.error("Service Worker registration failed ❌", err);
+    try { 
+      if (import.meta.env.DEV) { 
+        const registrations = await navigator.serviceWorker.getRegistrations();
+
+        // avregistrerar gamla SW under tiden när man är i Dev
+        for (const reg of registrations) {
+          await reg.unregister();
+
+          console.log("Dev: Service Worker unregistered");
+        }
+        
+        return;
+      }
+
+      // registrera som vanligt här (för användaren)
+      const base = import.meta.env.BASE_URL; 
+      await navigator.serviceWorker.register(`${base}service-worker.js`);
+      console.log("Service Worker registered ✅");
+    } 
+    catch (err) {
+      console.error("Service Worker setup failed ❌", err);
     }
   });
 }

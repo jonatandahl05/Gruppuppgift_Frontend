@@ -1,5 +1,8 @@
-import { getImage, openDetail } from "./featured.js";
-import { toggleFavorite, isFavorite } from "./favStore.js";
+
+// Filtrerar datan baserat på vad för urval användaren vill ha
+
+import { fetchAll } from "./fetchData.js";
+import { createCard } from "./card.js";
 
 const FILTERS = {
     people: {
@@ -26,37 +29,6 @@ const FILTERS = {
 
 let cachedData = [];
 
-function extractId(url) {
-    return url.match(/\/(\d+)\/$/)?.[1];
-}
-
-// Från gamla featured.js #issue17-branchen när metoder delades upp för att dom skulle va återanvändbara till saker som filtrering.
-function createCard(item, type) {
-    const id = extractId(item.url);
-    const name = item.name || item.title || "Unknown";
-    const card = document.createElement("div");
-    card.className = "featured-card";
-
-    card.innerHTML = `
-    <img src="${getImage(type, id)}" alt="${name}"
-         onerror="this.onerror=null; this.src='./star-wars.png';">
-    <h3>${name}</h3>
-    <div class="card-actions">
-      <button class="view-btn btn-primary" type="button">View more</button>
-      <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-    </div>
-  `;
-
-    card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-    const favBtn = card.querySelector(".fav-btn");
-    favBtn.onclick = () => {
-        toggleFavorite({ id, type, name });
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-    };
-
-    return card;
-}
-
 // Från gamla featured.js #issue17-branchen när metoder delades upp för att dom skulle va återanvändbara till saker som filtrering.
 function updateTitle(type) {
     const titleEl = document.getElementById("featured-title");
@@ -70,8 +42,9 @@ function renderCards(type, items) {
     container.innerHTML = "";
 
     for (const item of items) {
-        if (!extractId(item.url)) continue;
-        container.appendChild(createCard(item, type));
+        const card = createCard(item, type, { viewBtnClass: "btn-primary" });
+        if (!card) continue;
+        container.appendChild(card);
     }
 }
 
@@ -95,19 +68,6 @@ function filterData(data, field, value) {
         const values = cell.split(",").map(v => v.trim());
         return values.includes(search);
     });
-}
-
-// ── Hämta alla sidor ──
-async function fetchAll(type) {
-    let results = [];
-    let url = `https://swapi.py4e.com/api/${type}/`;
-    while (url) {
-        const res = await fetch(url);
-        const json = await res.json();
-        results = results.concat(json.results);
-        url = json.next;
-    }
-    return results;
 }
 
 export async function activateFilters(type) {

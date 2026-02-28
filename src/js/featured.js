@@ -1,17 +1,18 @@
-import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
 
-const PLACEHOLDER_IMG = "placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png";
+// Här är vart vi rendrerar datan som vi har eventuellt filtrerat och vill visa
 
-export function getImage(type, id) {
-  const base =
-    "https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img";
-  return {
-    people: `${base}/characters/${id}.jpg`,
-    planets: `${base}/planets/${id}.jpg`,
-    starships: `${base}/starships/${id}.jpg`,
-    films: `${base}/films/${id}.jpg`,
-  }[type];
-}
+import { normalizeType } from "./favStore.js";
+import {
+  fetchById,
+  fetchAllLimited,
+  searchType,
+  searchAllTypes,
+  fetchPage,
+  extractId,
+} from "./fetchData.js";
+import { getImage, PLACEHOLDER_IMG } from "./media.js";
+import { openDetail } from "./detailEvents.js";
+import { createCard } from "./card.js";
 
 const popular = {
   people: [1, 4, 5, 10, 11],
@@ -19,19 +20,6 @@ const popular = {
   starships: [9, 10, 11],
   films: [1, 2, 3],
 };
-
-const endpoints = {
-  people: "https://swapi.py4e.com/api/people/",
-  planets: "https://swapi.py4e.com/api/planets/",
-  starships: "https://swapi.py4e.com/api/starships/",
-  films: "https://swapi.py4e.com/api/films/",
-};
-
-export function openDetail(type, id) {
-  window.dispatchEvent(
-    new CustomEvent("open-detail", { detail: { type, id: String(id) } })
-  );
-}
 
 export async function loadFeatured() {
   const section = document.querySelector("#featured");
@@ -44,8 +32,7 @@ export async function loadFeatured() {
 
   const type = normalizeType(section.dataset.type);
   const ids = popular[type];
-  const endpoint = endpoints[type];
-  if (!ids || !endpoint) return;
+  if (!ids) return;
 
   // Reset UI direkt
   container.innerHTML = "";
@@ -67,40 +54,14 @@ export async function loadFeatured() {
     const id = String(idNum);
 
     try {
-      const res = await fetch(`${endpoint}${idNum}/`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+
+      const data = await fetchById(type, idNum);
 
       // Om användaren bytte view under tiden: avbryt render
       if (section.dataset.loadToken !== token) return;
 
-      const name = data.name || data.title || "Unknown";
-      const item = { id, type, name };
-
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
-      card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />
-        <h3>${name}</h3>
-
-        <div class="card-actions">
-          <button class="view-btn" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite(item);
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-      };
+      const card = createCard({ ...data, id }, type);
+      if (!card) return;
 
       // Ersätt placeholder på samma index (så ordningen blir stabil)
       const placeholder = container.children[index];
@@ -148,66 +109,27 @@ export async function loadFeatured() {
 }
 
 
-
-function extractId(url) {
-  const m = url.match(/\/(\d+)\/$/);
-  return m ? m[1] : null;
-}
-
 export async function loadAll(type) {
   const container = document.querySelector(".featured-list");
-  const endpoint = endpoints[type];
-  if (!container || !endpoint) return;
+
+  if (!container) return;
 
   container.innerHTML = '<p class="loading">Loading...</p>';
 
   try {
-    let nextUrl = endpoint;
-    let results = [];
-
-    // Begränsa så det inte blir tungt (justera vid behov)
-    while (nextUrl && results.length < 18) {
-      const res = await fetch(nextUrl);
-      const data = await res.json();
-      results = results.concat(data.results);
-      nextUrl = data.next;
-    }
+    
+    const results = await fetchAllLimited(type, 10); // Begränsa så det inte blir tungt (justera vid behov)
 
     container.innerHTML = "";
 
     for (const item of results) {
-      const id = extractId(item.url);
-      if (!id) continue;
-
-      const name = item.name || item.title || "Unknown";
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
-      card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />        
-        <h3>${name}</h3>
-
-        <div class="card-actions">
-          <button class="view-btn btn-primary" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite({ id, type, name });
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-      };
-
+      const card = createCard(item, type, { viewBtnClass: "btn-primary" });
+      if (!card) continue;
       container.appendChild(card);
     }
-  } catch (err) {
+
+  } 
+  catch (err) {
     console.error("Error loading all:", err);
     container.innerHTML = '<p class="error">Could not load data.</p>';
   }
@@ -216,8 +138,8 @@ export async function loadAll(type) {
 
 export async function searchResource(type, query) {
   const container = document.querySelector(".featured-list");
-  const endpoint = endpoints[type];
-  if (!container || !endpoint) return;
+
+  if (!container) return;
 
   const q = (query || "").trim();
   if (!q) {
@@ -229,16 +151,7 @@ export async function searchResource(type, query) {
 
   try {
     // SWAPI stödjer ?search=
-    let nextUrl = `${endpoint}?search=${encodeURIComponent(q)}`;
-    let results = [];
-
-    // Håll det lätt: max 18 kort (samma känsla som loadAll)
-    while (nextUrl && results.length < 18) {
-      const res = await fetch(nextUrl);
-      const data = await res.json();
-      results = results.concat(data.results || []);
-      nextUrl = data.next;
-    }
+    const results = await searchType(type, q, 10); // Håll det lätt: max 10 kort (samma känsla som loadAll)
 
     container.innerHTML = "";
 
@@ -246,32 +159,8 @@ export async function searchResource(type, query) {
       const id = extractId(item.url);
       if (!id) continue;
 
-      const name = item.name || item.title || "Unknown";
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
-      card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />        
-        <h3>${name}</h3>
-
-        <div class="card-actions">
-          <button class="view-btn" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite({ id, type, name });
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-      };
-
+      const card = createCard(item, type, { viewBtnClass: "btn-primary" });
+      if (!card) continue;
       container.appendChild(card);
     }
 
@@ -296,20 +185,8 @@ export async function searchAll(query) {
 
   container.innerHTML = '<p class="loading">Searching across all...</p>';
 
-  const types = ["people", "planets", "starships", "films"];
-
   try {
-    // Kör parallellt – snabbare än att vänta typ för typ
-    const responses = await Promise.all(
-      types.map(async (type) => {
-        const endpoint = endpoints[type];
-        const url = `${endpoint}?search=${encodeURIComponent(q)}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        const results = (data.results || []).slice(0, 8); // håll det lätt
-        return { type, results };
-      })
-    );
+    const responses = await searchAllTypes(q, 8);
 
     // Flatta och tagga items med typ
     const all = responses.flatMap(({ type, results }) =>
@@ -329,10 +206,6 @@ export async function searchAll(query) {
       const id = extractId(item.url);
       if (!id) continue;
 
-      const name = item.name || item.title || "Unknown";
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
       const typeLabel =
         type === "people" ? "Character" :
         type === "planets" ? "Planet" :
@@ -340,32 +213,16 @@ export async function searchAll(query) {
         type === "films" ? "Film" :
         type;
 
-      card.innerHTML = `
-        <div class="card-badge" aria-label="Type">${typeLabel}</div>
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />        
-        <h3>${name}</h3>
+      const card = createCard(item, type, {
+        showBadge: true,
+        badgeLabel: typeLabel,
+      });
 
-        <div class="card-actions">
-          <button class="view-btn" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail(type, id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite({ id, type, name });
-        favBtn.textContent = isFavorite(id, type) ? "★" : "☆";
-      };
-
+      if (!card) continue;
       container.appendChild(card);
     }
-  } catch (err) {
+  } 
+  catch (err) {
     console.error("Error searching across all:", err);
     container.innerHTML = '<p class="error">Could not search across all data.</p>';
   }
@@ -379,8 +236,8 @@ export async function loadFiltered(type, filter) {
   }
 
   const container = document.querySelector(".featured-list");
-  const endpoint = endpoints[type];
-  if (!container || !endpoint) return;
+
+  if (!container) return;
 
   container.innerHTML = '<p class="loading">Loading...</p>';
 
@@ -388,10 +245,7 @@ export async function loadFiltered(type, filter) {
   const lightSide = ["luke", "leia", "obi-wan", "yoda", "rey", "finn", "han", "chewbacca"];
 
   try {
-    // För enkelhet: första sidan räcker ofta för demo.
-    // Vill ni göra det bättre: loopa pages som i loadAll och filtrera över fler results.
-    const res = await fetch(endpoint);
-    const data = await res.json();
+    const data = await fetchPage(type, 1);
 
     container.innerHTML = "";
 
@@ -409,32 +263,8 @@ export async function loadFiltered(type, filter) {
 
       if (!matches) continue;
 
-      const name = item.name || "Unknown";
-      const card = document.createElement("div");
-      card.classList.add("featured-card");
-
-      card.innerHTML = `
-        <img 
-            src="${getImage(type, id)}" 
-            alt="${name}" 
-            onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}';"
-        />       
-        <h3>${name}</h3>
-
-        <div class="card-actions">
-          <button class="view-btn btn-primary" type="button">View more</button>
-          <button class="fav-btn" type="button">${isFavorite(id, "people") ? "★" : "☆"}</button>
-        </div>
-      `;
-
-      card.querySelector(".view-btn").onclick = () => openDetail("people", id);
-
-      const favBtn = card.querySelector(".fav-btn");
-      favBtn.onclick = () => {
-        toggleFavorite({ id, type: "people", name });
-        favBtn.textContent = isFavorite(id, "people") ? "★" : "☆";
-      };
-
+      const card = createCard(item, "people", { viewBtnClass: "btn-primary" });
+      if (!card) continue;
       container.appendChild(card);
     }
 

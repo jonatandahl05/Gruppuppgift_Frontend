@@ -1,24 +1,10 @@
+
+// Visar detaljerad information när vi klickar in på korten.
+
 import { toggleFavorite, isFavorite, normalizeType } from "./favStore.js";
 import { aboutSections } from "./aboutSections.js";
-
-const PLACEHOLDER_IMG = "placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png";
-
-const endpoints = {
-    people: "https://swapi.py4e.com/api/people/",
-    planets: "https://swapi.py4e.com/api/planets/",
-    starships: "https://swapi.py4e.com/api/starships/",
-    films: "https://swapi.py4e.com/api/films/"
-};
-
-function getImage(type, id) {
-    const base = "https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img";
-    return {
-        people: `${base}/characters/${id}.jpg`,
-        planets: `${base}/planets/${id}.jpg`,
-        starships: `${base}/starships/${id}.jpg`,
-        films: `${base}/films/${id}.jpg`
-    }[type];
-}
+import { fetchById } from "./fetchData.js";
+import { getImage, PLACEHOLDER_IMG } from "./media.js";
 
 export async function renderDetail(type, id) {
     type = normalizeType(type);
@@ -26,8 +12,7 @@ export async function renderDetail(type, id) {
 
     const container = document.getElementById("detail-container");
 
-    const res = await fetch(`${endpoints[type]}${id}/`);
-    const data = await res.json();
+    const data = await fetchById(type, id);
 
     const item = { id, type, name: data.name || data.title };
 
@@ -38,7 +23,7 @@ export async function renderDetail(type, id) {
             <h2 id="detail-about-title">About</h2>
             <p>${aboutEntry.about}</p>
         </section>
-    `
+        `
         : "";
 
     const infoFields = Object.entries(data)
