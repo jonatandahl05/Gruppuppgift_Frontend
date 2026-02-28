@@ -20,18 +20,20 @@ export function renderNav() {
         </form>
 
 
-<button id="theme-toggle" class="dark-mode-toggle" 
-        aria-label="Växla mörkt läge">
-  <span class="theme-toggle__icon">🌙</span>
-</button>
+        <button
+          id="theme-toggle" class="dark-mode-toggle" type="button" aria-label="Växla mörkt läge" aria-pressed="false">
+          <span class="theme-toggle__icon">🌙</span>
+        </button>
 
-        <button class="nav-toggle" 
-                aria-label="Öppna meny"
-                aria-expanded="false">
+        <button class="nav-toggle"
+          type="button"
+          aria-label="Öppna meny"
+          aria-expanded="false"
+          aria-controls="primary-navigation">
           <span class="hamburger"></span>
         </button>
 
-        <ul class="nav-links">
+        <ul class="nav-links" id="primary-navigation">
           ${menuData.map(item => `
             <li>
               <button class="nav-link-btn"
@@ -126,14 +128,6 @@ export function initNav() {
     }
 
   };
-
-//    navLinks.querySelectorAll('a').forEach(link => {
-//        link.addEventListener('click', () => {
-//            if (navLinks.classList.contains('active')) {
-//                toggleMenu();
-//            }
-//        });
-//    });
 
 function initDesktopDropdown() {
     document.querySelectorAll(".nav-item").forEach(item => {
