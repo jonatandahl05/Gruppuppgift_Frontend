@@ -2,9 +2,24 @@ import { toggleFavorite, isFavorite } from "./favStore.js";
 import { getImage, PLACEHOLDER_IMG } from "./media.js";
 import { openDetail } from "./detailEvents.js";
 
+function getTypeLabel(type) {
+  switch (type) {
+    case "people":
+      return "Character";
+    case "planets":
+      return "Planet";
+    case "starships":
+      return "Starship";
+    case "films":
+      return "Film";
+    default:
+      return type;
+  }
+}
+
 export function createCard(item, type, options = {}) {
   const {
-    showBadge = false,
+    showBadge = true,
     badgeLabel = "",
     viewBtnClass = "",
     onFavoriteToggle = null,
@@ -14,12 +29,13 @@ export function createCard(item, type, options = {}) {
   if (!id) return null;
 
   const name = item.name || item.title || "Unknown";
+  const typeLabel = badgeLabel || getTypeLabel(type);
 
   const card = document.createElement("div");
   card.className = "featured-card";
 
   const badgeMarkup = showBadge
-    ? `<div class="card-badge" aria-label="Type">${badgeLabel}</div>`
+    ? `<div class="card-badge" aria-label="Type">${typeLabel}</div>`
     : "";
 
   card.innerHTML = `
