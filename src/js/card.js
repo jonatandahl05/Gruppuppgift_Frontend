@@ -33,7 +33,8 @@ export function createCard(item, type, options = {}) {
 
     <div class="card-actions">
       <button class="${`view-btn ${viewBtnClass}`.trim()}" type="button">View more</button>
-      <button class="fav-btn" type="button">${isFavorite(id, type) ? "★" : "☆"}</button>
+      <button class="fav-btn" type="button"
+      aria-label="${isFavorite(id, type) ? `Remove ${name} from favorites` : `Add ${name} to favorites`}">${isFavorite(id, type) ? "★" : "☆"}</button>
     </div>
   `;
 
@@ -45,6 +46,12 @@ export function createCard(item, type, options = {}) {
 
     const favoriteNow = isFavorite(id, type);
     favBtn.textContent = favoriteNow ? "★" : "☆";
+    favBtn.setAttribute(
+      "aria-label",
+      favoriteNow
+        ? `Remove ${name} from favorites`
+        : `Add ${name} to favorites`
+    );
 
     if (typeof onFavoriteToggle === "function") {
       onFavoriteToggle({

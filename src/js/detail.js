@@ -43,7 +43,7 @@ export async function renderDetail(type, id) {
         
         <h1>${item.name}</h1>
 
-        <button id="fav-detail-btn" class="fav-btn"></button>
+        <button id="fav-detail-btn" class="fav-btn" type="button"></button>
 
         ${aboutMarkup}
 
@@ -51,14 +51,24 @@ export async function renderDetail(type, id) {
     `;
 
     const favBtn = document.getElementById("fav-detail-btn");
-    favBtn.textContent = isFavorite(id, type)
-        ? "★ Remove Favorite"
-        : "☆ Add Favorite";
+    function updateFavButton() {
+        const favoriteNow = isFavorite(id, type);
+        favBtn.textContent = favoriteNow
+            ? "★ Remove Favorite"
+            : "☆ Add Favorite";
+
+        favBtn.setAttribute(
+            "aria-label",
+            favoriteNow
+                ? `Remove ${item.name} from favorites`
+                : `Add ${item.name} to favorites`
+        );
+    }
+
+    updateFavButton();
 
     favBtn.onclick = () => {
         toggleFavorite(item);
-        favBtn.textContent = isFavorite(id, type)
-            ? "★ Remove Favorite"
-            : "☆ Add Favorite";
+        updateFavButton();
     };
 }

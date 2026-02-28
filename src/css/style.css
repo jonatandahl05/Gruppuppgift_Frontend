@@ -410,7 +410,7 @@ button:hover {
    ===================================================== */
 
 #featured {
-  padding: 1rem 0;
+  padding: 1rem var(--spacing-md);
   position: relative;
 }
 
