@@ -432,6 +432,7 @@ button:hover {
 
 .featured-card {
   min-width: 180px;
+    max-width: 280px;
   background: var(--color-surface);
   padding: 1rem;
   border-radius: var(--radius);
