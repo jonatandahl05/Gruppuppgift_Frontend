@@ -101,7 +101,7 @@ Exempel på centrala delar i projektet:
 
 Testerna infördes främst under den senare delen av projektet men blev ett viktigt stöd i samband med refaktorering, pull requests och slutlig kvalitetssäkring. De hjälpte oss att upptäcka regressionsfel, säkerställa grundläggande funktionalitet och kontrollera att våra förbättringar för tillgänglighet faktiskt gav önskat resultat.
 
-## Författare
-Malmö Grupp 2
+## Författare - Malmö Grupp 2
 Jonathan Isaksson, Konstantinos Nascos, Jonatan Emil Dahl, Markus Nikolic, Rasha Knifdi, Felix Lidén
+
 
