@@ -1,5 +1,6 @@
 export const PLACEHOLDER_IMG =
-  "placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png";
+    import.meta.env.BASE_URL +
+    "placeholder/198-1986030_pixalry-star-wars-icons-star-wars-ilustraciones.png";
 
 export function getImage(type, id) {
   const base =
