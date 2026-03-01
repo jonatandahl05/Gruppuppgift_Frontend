@@ -1,6 +1,6 @@
-# Galactic Dex
+# Galactic Dex - Malmö 2 Gruppen
 
-Galactic Dex är en Star Wars-inspirerad Progressive Web App byggd med JavaScript, HTML, CSS och Vite. Applikationen hämtar data från SWAPI och låter användaren bläddra bland karaktärer, planeter, rymdskepp och filmer, läsa detaljvyer, spara favoriter och använda appen med visst offline-stöd.
+Galactic Dex är en Web App som hämtar data från SWAPI och låter användaren bläddra bland karaktärer, planeter, rymdskepp och filmer, läsa detaljvyer, spara favoriter och använda appen med visst offline-stöd.
 
 ## Funktioner
 
@@ -103,5 +103,6 @@ Testerna infördes främst under den senare delen av projektet men blev ett vikt
 
 ## Författare - Malmö Grupp 2
 Jonathan Isaksson, Konstantinos Nascos, Jonatan Emil Dahl, Markus Nikolic, Rasha Knifdi, Felix Lidén
+
 
 
