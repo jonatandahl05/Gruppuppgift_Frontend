@@ -720,12 +720,15 @@ button:hover {
   text-align: center;
   font-weight: 600;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 165, 0, 0.15);
+  background: #CBB767;
   backdrop-filter: blur(6px);
+  color: black;
 }
 
 html.dark-theme .offline-banner {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: #814718;
+  color: white;
 }
 
 .fav-btn {
