@@ -818,3 +818,18 @@ html.dark-theme .offline-banner {
     padding: 0.5rem;
     margin-bottom: 0.5rem;
 }
+
+/* OFFLINE BANNER – bättre kontrast i light mode */
+.offline-banner {
+  color: white;
+  text-shadow:
+          -1px -1px 0 black,
+          1px -1px 0 black,
+          -1px  1px 0 black,
+          1px  1px 0 black;
+}
+
+/* Ta bort outline i dark mode */
+html.dark-theme .offline-banner {
+  text-shadow: none;
+}
